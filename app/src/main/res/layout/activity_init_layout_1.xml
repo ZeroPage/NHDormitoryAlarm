@@ -24,16 +24,16 @@
         android:orientation="vertical">
 
         <ImageView
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
+            android:layout_width="200dp"
+            android:layout_height="80dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/splash_logo" />
+            android:src="@drawable/init_1" />
 
-        <com.pnikosis.materialishprogress.ProgressWheel
+        <Button
+            android:id="@+id/btn_init_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            wheel:matProg_barColor="#1fb25a"
-            wheel:matProg_progressIndeterminate="true"
+            android:text="시작하기"
             android:layout_gravity="center_horizontal|bottom" />
 
     </LinearLayout>

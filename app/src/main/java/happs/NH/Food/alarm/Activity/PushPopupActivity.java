@@ -20,8 +20,8 @@ public class PushPopupActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 애니메이션 설정 및 뷰 생성
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+        // 나올얘는 fade_in, 기존얘는 애니메이션 없음.
+        overridePendingTransition(R.anim.fadein, 0);
         setContentView(R.layout.activity_popup);
 
         getWindow().addFlags(
@@ -49,6 +49,8 @@ public class PushPopupActivity extends Activity {
             @Override
             public void run() {
                 finish();
+                // 나올얘는 애니메이션 없음, 사라질얘는 fade_out.
+                overridePendingTransition(0, R.anim.fadeout);
             }
         }, 5500);
     }

@@ -2,8 +2,11 @@ package happs.NH.Food.alarm.Activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,38 +20,41 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import dalvik.system.DexClassLoader;
+import happs.NH.Food.alarm.Interfaces.OnCallbackListener;
 import happs.NH.Food.alarm.Network.APKdownAsyncTask;
 import happs.NH.Food.alarm.Network.OnPostExecuteListener;
 import happs.NH.Food.alarm.Network.VolleyQueue;
 import happs.NH.Food.alarm.R;
 import happs.NH.Food.alarm.Utils.Constant;
+import happs.NH.Food.alarm.Utils.ObscuredSharedPreferences;
+import happs.NH.Food.alarm.Utils.PreferenceBuilder;
 
 /**
  * Created by SH on 2016-03-05.
  */
 public class SplashActivity extends Activity {
 
+    private final String INFO_URL = Constant.HTTP + Constant.SERVER_URL + Constant.ANDROID_INFO;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        final String INFO_URL = Constant.HTTP + Constant.SERVER_URL + Constant.ANDROID_INFO;
+        /* HTTP REQUEST DO! */
+        _versionCheck();
+        _initCheck(new OnCallbackListener() {
+            @Override
+            public void onSuccess() {
+                Intent i = new Intent(getApplicationContext(), InitialSettingActivity.class);
+                finish(); startActivity(i);
+            }
 
-        StringRequest r =
-                new StringRequest(Request.Method.GET, INFO_URL, new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+            @Override
+            public void onFail() {
 
-                    }
-                });
-
-        VolleyQueue.getInstance(getApplicationContext()).addObjectToQueue(r);
+            }
+        });
 
         new APKdownAsyncTask(new OnPostExecuteListener(){
 
@@ -65,7 +71,38 @@ public class SplashActivity extends Activity {
 
     }
 
-    @SuppressWarnings("NewApi")
+    /* Asynchronous HTTP REQUEST */
+    private void _initCheck(OnCallbackListener callback){
+
+        boolean isFirstVisit = PreferenceBuilder.getInstance(getApplicationContext())
+                .getSecuredPreference().getBoolean("pref_isFirstVisit", true);
+
+        if(isFirstVisit){
+            callback.onSuccess();
+        } else {
+            callback.onFail();
+        }
+    }
+
+    private void _versionCheck(){
+
+        StringRequest r =
+                new StringRequest(Request.Method.GET, INFO_URL, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.i("json", response);
+                        Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
+
+        VolleyQueue.getInstance(getApplicationContext()).addObjectToQueue(r);
+    }
+
     private void test(){
 
         try {

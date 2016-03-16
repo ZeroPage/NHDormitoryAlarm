@@ -30,4 +30,5 @@ dependencies {
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.0.2'
     compile 'com.pnikosis:materialish-progress:1.7'
     compile project(':volleyFramework')
+    compile 'org.webjars:angular-loading-bar:0.8.0'
 }

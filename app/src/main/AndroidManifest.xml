@@ -33,10 +33,13 @@
             android:name=".Activity.PushPopupActivity"
             android:theme="@style/PushPopup"/>
 
+        <activity
+            android:name=".Activity.InitialSettingActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+
         <service
             android:name=".Service.MQTTService"
-            android:enabled="true"
-            />
+            android:enabled="true" />
 
         <receiver
             android:name=".Service.MQTTServiceBroadcastReceiver"
