@@ -4,4 +4,9 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="transparent">#00000000</color>
+
+    <color name="nhGreen">#1FB25A</color>
+    <color name="nhYellow">#FFC20E</color>
+    <color name="nhBlue">#0066B3</color>
+
 </resources>

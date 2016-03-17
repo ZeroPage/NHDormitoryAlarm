@@ -33,7 +33,8 @@
             android:id="@+id/btn_init_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="시작하기"
+            android:text="@string/btn_init_start"
+            android:textSize="12sp"
             android:layout_gravity="center_horizontal|bottom" />
 
     </LinearLayout>
