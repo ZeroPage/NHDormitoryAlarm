@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.HttpStack;
 import com.android.volley.toolbox.Volley;
 
 /**
@@ -33,6 +34,14 @@ public class VolleyQueue {
         }
         return requestQueue;
     }
+
+    public RequestQueue getRequestQueue(HttpStack httpStack){
+        if(requestQueue == null){
+            requestQueue = Volley.newRequestQueue(ctx.getApplicationContext(), httpStack);
+        }
+        return requestQueue;
+    }
+
 
     public void addObjectToQueue(Request reqObj){
         this.getRequestQueue().add(reqObj);

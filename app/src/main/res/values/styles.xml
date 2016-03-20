@@ -24,4 +24,11 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <!-- 다이어로그 반투명 테마 -->
+    <style name="Dialog" parent="AppTheme.NoActionBar">
+        <item name="android:windowBackground">@color/half_transparent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
 </resources>

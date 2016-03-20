@@ -2,6 +2,14 @@
     <string name="app_name">농협장학관 알람</string>
     <string name="action_settings">Settings</string>
 
+    <!-- init settings -->
     <string name="btn_init_start">시작하기</string>
+    <string name="prompt_init_id">아이디</string>
+    <string name="prompt_init_pw">비밀번호</string>
+    <string name="prompt_init_login">로그인</string>
+
+    <string name="title_init_step1">사용자설정</string>
+    <string name="title_init_step2">개인정보 수집 및 이용에 대한 안내</string>
+
 
 </resources>

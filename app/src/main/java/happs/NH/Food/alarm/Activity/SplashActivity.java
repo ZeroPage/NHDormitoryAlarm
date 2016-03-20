@@ -3,10 +3,8 @@ package happs.NH.Food.alarm.Activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,7 +24,6 @@ import happs.NH.Food.alarm.Network.OnPostExecuteListener;
 import happs.NH.Food.alarm.Network.VolleyQueue;
 import happs.NH.Food.alarm.R;
 import happs.NH.Food.alarm.Utils.Constant;
-import happs.NH.Food.alarm.Utils.ObscuredSharedPreferences;
 import happs.NH.Food.alarm.Utils.PreferenceBuilder;
 
 /**
@@ -46,7 +43,7 @@ public class SplashActivity extends Activity {
         _initCheck(new OnCallbackListener() {
             @Override
             public void onSuccess() {
-                Intent i = new Intent(getApplicationContext(), InitialSettingActivity.class);
+                Intent i = new Intent(getApplicationContext(), InitSettingActivity.class);
                 finish(); startActivity(i);
             }
 

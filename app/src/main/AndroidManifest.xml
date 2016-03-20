@@ -34,7 +34,11 @@
             android:theme="@style/PushPopup"/>
 
         <activity
-            android:name=".Activity.InitialSettingActivity"
+            android:name=".Activity.InitSettingDialogActivity"
+            android:theme="@style/Dialog" />
+
+        <activity
+            android:name=".Activity.InitSettingActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service
