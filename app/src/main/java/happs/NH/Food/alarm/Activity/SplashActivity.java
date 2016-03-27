@@ -53,18 +53,18 @@ public class SplashActivity extends Activity {
             }
         });
 
-        new APKdownAsyncTask(new OnPostExecuteListener(){
-
-            @Override
-            public void onSuccess() {
-                test();
-            }
-
-            @Override
-            public void onFail() {
-                Log.i("Appdown", "fail");
-            }
-        }).execute("http://happs.gtz.kr/apk/Test.apk");
+//        new APKdownAsyncTask(new OnPostExecuteListener(){
+//
+//            @Override
+//            public void onSuccess() {
+//                test();
+//            }
+//
+//            @Override
+//            public void onFail() {
+//                Log.i("Appdown", "fail");
+//            }
+//        }).execute("http://happs.gtz.kr/apk/Test.apk");
 
     }
 

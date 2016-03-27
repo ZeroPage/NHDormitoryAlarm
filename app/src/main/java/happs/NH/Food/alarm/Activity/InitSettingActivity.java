@@ -27,9 +27,6 @@ public class InitSettingActivity extends AppCompatActivity {
         // initialize
         _createObjects();
         _initActions();
-
-        startService(new Intent(InitSettingActivity.this, MQTTService.class));
-
     }
 
     private void _createObjects(){

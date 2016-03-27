@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 
-import happs.NH.Food.alarm.Fragment.InitSettingDialogFragment1;
+import happs.NH.Food.alarm.Fragment.InitSettingDialogFragment.InitSettingDialogFragment1;
 import happs.NH.Food.alarm.R;
 
 /**

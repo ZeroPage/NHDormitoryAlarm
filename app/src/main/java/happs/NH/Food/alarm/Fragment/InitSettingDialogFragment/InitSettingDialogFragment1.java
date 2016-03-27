@@ -1,8 +1,7 @@
-package happs.NH.Food.alarm.Fragment;
+package happs.NH.Food.alarm.Fragment.InitSettingDialogFragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,21 +17,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 
-import net.htmlparser.jericho.Element;
-import net.htmlparser.jericho.Source;
-import net.htmlparser.jericho.StartTagType;
-import net.htmlparser.jericho.Tag;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import happs.NH.Food.alarm.Activity.InitSettingDialogActivity;
-import happs.NH.Food.alarm.Interfaces.OnCallbackListener;
 import happs.NH.Food.alarm.Interfaces.OnResponseListener;
 import happs.NH.Food.alarm.Network.VolleyQueue;
 import happs.NH.Food.alarm.R;
@@ -80,8 +69,8 @@ public class InitSettingDialogFragment1 extends Fragment {
                 // 로그인 시도
                 __doLogin(uid, upw, new OnResponseListener() {
                     @Override
-                    public void onSuccess(String response) {
-                        ___changeToNextStep(response, uid, upw);
+                    public void onSuccess(Object response) {
+                        ___changeToNextStep((String)response, uid, upw);
                     }
 
                     @Override
@@ -108,7 +97,7 @@ public class InitSettingDialogFragment1 extends Fragment {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getActivity().getApplicationContext(), Constant.LOGIN_FAIL_MSG, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity().getApplicationContext(), getString(R.string.msg_login_fail), Toast.LENGTH_LONG).show();
                     }
                 }){
 

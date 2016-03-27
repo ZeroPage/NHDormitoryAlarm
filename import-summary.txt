@@ -1,0 +1,71 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Risky Project Location:
+-----------------------
+The tools *should* handle project locations in any directory. However,
+due to bugs, placing projects in directories containing spaces in the
+path, or characters like ", ' and &, have had issues. We're working to
+eliminate these bugs, but to save yourself headaches you may want to
+move your project to a location where this is not a problem.
+C:\Users\SH\Desktop\ANDROID PROJECT\NHFoodAlarm_Refactoring\NHDormitoryAlarm
+                           -                                                
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+* ant.properties
+* build.xml
+* proguard-project.txt
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+* AndroidManifest.xml => httpclientlib\src\main\AndroidManifest.xml
+* res\ => httpclientlib\src\main\res\
+* src\ => httpclientlib\src\main\java\
+* src\ch\boye\httpclientandroidlib\annotation\package.html => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\annotation\package.html
+* src\ch\boye\httpclientandroidlib\client\cache\package.html => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\client\cache\package.html
+* src\ch\boye\httpclientandroidlib\client\protocol\RequestAuthenticationBase.java0000644 => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\client\protocol\RequestAuthenticationBase.java0000644
+* src\ch\boye\httpclientandroidlib\concurrent\package.html => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\concurrent\package.html
+* src\ch\boye\httpclientandroidlib\entity\package.html => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\entity\package.html
+* src\ch\boye\httpclientandroidlib\impl\client\AbstractAuthenticationHandler.java0000644 => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\impl\client\AbstractAuthenticationHandler.java0000644
+* src\ch\boye\httpclientandroidlib\impl\client\AuthenticationStrategyAdaptor.java0000644 => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\impl\client\AuthenticationStrategyAdaptor.java0000644
+* src\ch\boye\httpclientandroidlib\impl\client\cache\ManagedHttpCacheStorage.java0000644 => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\impl\client\cache\ManagedHttpCacheStorage.java0000644
+* src\ch\boye\httpclientandroidlib\impl\client\cache\package.html => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\impl\client\cache\package.html
+* src\ch\boye\httpclientandroidlib\impl\client\EntityEnclosingRequestWrapper.java0000644 => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\impl\client\EntityEnclosingRequestWrapper.java0000644
+* src\ch\boye\httpclientandroidlib\impl\client\FutureRequestExecutionMetrics.java0000644 => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\impl\client\FutureRequestExecutionMetrics.java0000644
+* src\ch\boye\httpclientandroidlib\impl\client\FutureRequestExecutionService.java0000644 => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\impl\client\FutureRequestExecutionService.java0000644
+* src\ch\boye\httpclientandroidlib\impl\conn\DefaultClientConnectionOperator.java0000644 => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\impl\conn\DefaultClientConnectionOperator.java0000644
+* src\ch\boye\httpclientandroidlib\impl\cookie\RFC2965DomainAttributeHandler.java0000644 => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\impl\cookie\RFC2965DomainAttributeHandler.java0000644
+* src\ch\boye\httpclientandroidlib\impl\entity\package.html => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\impl\entity\package.html
+* src\ch\boye\httpclientandroidlib\impl\io\package.html => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\impl\io\package.html
+* src\ch\boye\httpclientandroidlib\impl\package.html => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\impl\package.html
+* src\ch\boye\httpclientandroidlib\impl\pool\package.html => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\impl\pool\package.html
+* src\ch\boye\httpclientandroidlib\io\package.html => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\io\package.html
+* src\ch\boye\httpclientandroidlib\message\package.html => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\message\package.html
+* src\ch\boye\httpclientandroidlib\package.html => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\package.html
+* src\ch\boye\httpclientandroidlib\params\package.html => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\params\package.html
+* src\ch\boye\httpclientandroidlib\pool\package.html => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\pool\package.html
+* src\ch\boye\httpclientandroidlib\protocol\package.html => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\protocol\package.html
+* src\ch\boye\httpclientandroidlib\util\package.html => httpclientlib\src\main\resources\ch\boye\httpclientandroidlib\util\package.html
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)

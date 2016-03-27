@@ -21,65 +21,64 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
-import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import happs.NH.Food.alarm.Activity.PushPopupActivity;
-import happs.NH.Food.alarm.Utils.PushBuilder;
+import happs.NH.Food.alarm.Utils.PreferenceBuilder;
 
 public class MQTTService extends Service {
 
     private static final String TAG = "MQTTService";
     private static boolean hasWifi = false;
-    private static boolean hasMmobile = false;
-
-    private final int MAX_TRY = 3;
-    private int tryCnt = 0;
-    private boolean isSucess = false;
+    private static boolean hasMobile = false;
 
     private MQTTServiceBinder mBinder = new MQTTServiceBinder(this);
     private MQTTBroadcastReceiver receiver;
 
     private Thread thread;
     private ConnectivityManager mConnMan;
-    private String deviceId;
     private volatile IMqttAsyncClient mqttClient;
+    private volatile IMqttToken token;
 
     class MQTTBroadcastReceiver extends BroadcastReceiver {
+
         @Override
         public void onReceive(Context context, Intent intent) {
+
             IMqttToken token;
-            boolean hasConnectivity = false;
-            boolean hasChanged = false;
+            boolean hasConnectivity, hasChanged = false;
             NetworkInfo[] infos = mConnMan.getAllNetworkInfo();
 
-            for (int i = 0; i < infos.length; i++){
-                if (infos[i].getTypeName().equalsIgnoreCase("MOBILE")){
-                    if((infos[i].isConnected() != hasMmobile)){
-                        hasChanged = true;
-                        hasMmobile = infos[i].isConnected();
-                    }
-                    Log.d(TAG, infos[i].getTypeName() + " is " + infos[i].isConnected());
-                } else if ( infos[i].getTypeName().equalsIgnoreCase("WIFI") ){
-                    if((infos[i].isConnected() != hasWifi)){
-                        hasChanged = true;
-                        hasWifi = infos[i].isConnected();
-                    }
-                     Log.d(TAG, infos[i].getTypeName() + " is " + infos[i].isConnected());
+            for (NetworkInfo network: infos){
+                int type = network.getType();
+
+                switch (type){
+                    case ConnectivityManager.TYPE_MOBILE:
+                        if((network.isConnected() != hasMobile)){
+                            hasChanged = true;
+                            hasMobile = network.isConnected();
+                        } break;
+
+                    case ConnectivityManager.TYPE_WIFI:
+                        if((network.isConnected() != hasWifi)){
+                            hasChanged = true;
+                            hasWifi = network.isConnected();
+                        } break;
                 }
             }
 
-            hasConnectivity = hasMmobile || hasWifi;
+            hasConnectivity = hasMobile || hasWifi;
             Log.i(TAG, "hasConn: " + hasConnectivity + " hasChange: " + hasChanged + " - "+(mqttClient == null || !mqttClient.isConnected()));
 
             if (hasConnectivity && hasChanged && (mqttClient == null || !mqttClient.isConnected())) {
-                doConnect();
+                connect();
             } else if (!hasConnectivity && mqttClient != null && mqttClient.isConnected()) {
                 Log.d(TAG, "doDisconnect()");
                 try {
@@ -95,12 +94,12 @@ public class MQTTService extends Service {
     @Override
     public void onCreate() {
         IntentFilter intentf = new IntentFilter();
-        setClientID();
         intentf.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         unregisterRestartAlarm();
 
         receiver = new MQTTBroadcastReceiver();
         registerReceiver(receiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
         mConnMan = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
     }
 
@@ -129,7 +128,7 @@ public class MQTTService extends Service {
 
     }
 
-    public void unSubscribe(String topic){
+    public void unsubscribe(String topic){
         try {
             mqttClient.unsubscribe(topic);
         } catch (MqttException e) {
@@ -137,70 +136,73 @@ public class MQTTService extends Service {
         }
     }
 
+    public boolean subscribe(String... topics){
 
-    private void setClientID(){
-        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        WifiInfo wInfo = wifiManager.getConnectionInfo();
-        deviceId = wInfo.getMacAddress();
-
-        if(deviceId == null){
-            deviceId = MqttAsyncClient.generateClientId();
+        try {
+            for(String t : topics) {
+                token = mqttClient.subscribe(t, 0);
+                token.waitForCompletion(5000);
+            }
+            return true;
+        } catch (MqttException e) {
+            e.printStackTrace();
         }
 
-        Log.i("ID", deviceId);
+        return false;
     }
 
-    private void doConnect(){
-        Log.d(TAG, "doConnect()");
-        IMqttToken token;
+    private boolean connect(){
+        Log.d(TAG, "connect()");
+
+        // client id & password
+        final String cid = PreferenceBuilder.getInstance(getApplicationContext())
+                .getSecuredPreference().getString("pref_userid","");
+        final String cpw = PreferenceBuilder.getInstance(getApplicationContext())
+                .getSecuredPreference().getString("pref_device","");
+
+        // MQTT Options
         MqttConnectOptions options = new MqttConnectOptions();
         options.setCleanSession(false);
         options.setConnectionTimeout(5000);
         options.setKeepAliveInterval(20 * 60 * 1000); // 20분 keep-alive interval
+        options.setUserName(cid);
+        options.setPassword(cpw.toCharArray());
+
+        // Logging..
         Log.i("Interval", options.getKeepAliveInterval() + "");
 
-        while(true) {
+        try {
+            mqttClient = new MqttAsyncClient("tcp://leesnhyun.iptime.org:1883", cid, new MemoryPersistence());
+            token = mqttClient.connect(options);
+            token.waitForCompletion(3500);
+            mqttClient.setCallback(new MqttEventCallback());
 
-            try {
-                mqttClient = new MqttAsyncClient("tcp://125.128.223.83:1883", deviceId, new MemoryPersistence());
-                token = mqttClient.connect();
-                token.waitForCompletion(3500);
-                mqttClient.setCallback(new MqttEventCallback());
-                token = mqttClient.subscribe("test", 0);
-                token.waitForCompletion(5000);
-                token = mqttClient.subscribe("test/test", 0);
-                token.waitForCompletion(5000);
-                isSucess = true;
-            } catch (MqttSecurityException e) {
-                e.printStackTrace();
-            } catch (MqttException e) {
-                switch (e.getReasonCode()) {
-                    case MqttException.REASON_CODE_BROKER_UNAVAILABLE:
-                    case MqttException.REASON_CODE_CLIENT_TIMEOUT:
-                    case MqttException.REASON_CODE_CONNECTION_LOST:
-                    case MqttException.REASON_CODE_SERVER_CONNECT_ERROR:
-                        Log.v(TAG, "c" + e.getMessage());
-                        e.printStackTrace();
-                        break;
+            return true;
 
-                    case MqttException.REASON_CODE_FAILED_AUTHENTICATION:
-                        Intent i = new Intent("RAISEALLARM");
-                        i.putExtra("ALLARM", e);
-                        Log.e(TAG, "b" + e.getMessage());
-                        break;
-                    default:
-                        Log.e(TAG, "a" + e.getMessage());
-                }
+        } catch (MqttSecurityException e) {
+            e.printStackTrace();
+        } catch (MqttException e) {
+            switch (e.getReasonCode()) {
+                case MqttException.REASON_CODE_BROKER_UNAVAILABLE:
+                case MqttException.REASON_CODE_CLIENT_TIMEOUT:
+                case MqttException.REASON_CODE_CONNECTION_LOST:
+                case MqttException.REASON_CODE_SERVER_CONNECT_ERROR:
+                    Log.v(TAG, "c" + e.getMessage());
+                    e.printStackTrace();
+                    break;
 
-                tryCnt++;
-            }
+                case MqttException.REASON_CODE_FAILED_AUTHENTICATION:
+                    Intent i = new Intent("RAISEALLARM");
+                    i.putExtra("ALLARM", e);
+                    Log.e(TAG, "b" + e.getMessage());
+                    break;
 
-            if ( isSucess ) break;
-            if ( tryCnt == MAX_TRY ) {
-                Toast.makeText(getApplicationContext(), "서버 접속 실패", Toast.LENGTH_LONG).show();
-                break;
+                default:
+                    Log.e(TAG, "a" + e.getMessage());
             }
         }
+
+        return false;
     }
 
     @Override
@@ -214,7 +216,7 @@ public class MQTTService extends Service {
         @Override
         public void connectionLost(Throwable arg0) {
             Log.i("MQTT", "Connection lost");
-            doConnect();
+            connect();
         }
 
         @Override
@@ -253,6 +255,7 @@ public class MQTTService extends Service {
     public String getThread(){
         return Long.valueOf(thread.getId()).toString();
     }
+
 
     // support persistent of Service
     public void registerRestartAlarm() {

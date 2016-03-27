@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion '23.0.2'
     defaultConfig {
         applicationId "happs.NH.Food.alarm"
         minSdkVersion 10
@@ -13,8 +13,9 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable false
         }
     }
     productFlavors {
@@ -29,8 +30,8 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.0.2'
     compile 'com.pnikosis:materialish-progress:1.7'
-    compile 'org.webjars:angular-loading-bar:0.8.0'
     compile 'com.android.support:cardview-v7:23.2.0'
     compile 'net.htmlparser.jericho:jericho-html:3.4'
+    compile 'com.madgag.spongycastle:core:1.54.0.0'
     compile project(':volleyFramework')
 }

@@ -6,7 +6,6 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
-import com.android.volley.ResponseDelivery;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,14 +13,16 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import happs.NH.Food.alarm.Interfaces.OnCallbackListener;
+
 /**
  * Created by SH on 2015-10-15.
  */
 public class APKdownAsyncTask extends AsyncTask<String,Void,Boolean> {
 
-    OnPostExecuteListener listener;
+    OnCallbackListener listener;
 
-    public APKdownAsyncTask(OnPostExecuteListener l){
+    public APKdownAsyncTask(OnCallbackListener l){
         this.listener = l;
     }
 
@@ -53,7 +54,7 @@ public class APKdownAsyncTask extends AsyncTask<String,Void,Boolean> {
             InputStream is = c.getInputStream();
 
             byte[] buffer = new byte[1024];
-            int len1 = 0;
+            int len1;
             while ((len1 = is.read(buffer)) != -1) {
                 fos.write(buffer, 0, len1);
             }

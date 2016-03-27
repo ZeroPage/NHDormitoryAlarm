@@ -5,7 +5,7 @@ package happs.NH.Food.alarm.Interfaces;
  */
 public interface OnResponseListener {
 
-    void onSuccess(String response);
+    void onSuccess(Object response);
     void onFail();
 
 }
