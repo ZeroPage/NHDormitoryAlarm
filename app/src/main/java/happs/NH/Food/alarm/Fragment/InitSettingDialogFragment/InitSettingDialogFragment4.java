@@ -130,8 +130,7 @@ public class InitSettingDialogFragment4 extends Fragment implements OnStepChange
 
         return view;
     }
-
-
+    
     /// privates
     private void _saveInDataBase(final OnDataBaseInsertListener callback){
 
@@ -218,7 +217,7 @@ public class InitSettingDialogFragment4 extends Fragment implements OnStepChange
         // 자기자신의 토픽을 구독하고 퍼블리쉬해보자
         final String uid = PreferenceBuilder.getInstance(getActivity()).getSecuredPreference()
                 .getString("pref_userid", "");
-        final String topic = Constant.THIS_YEAR + uid;
+        final String topic = Constant.THIS_YEAR + "members/" + uid;
 
         final TopicBuilder tb = new TopicBuilder(getActivity().getApplicationContext());
         tb.subscribe(TopicConstant.READWRITE, new OnDataBaseInsertListener() {
@@ -262,7 +261,7 @@ public class InitSettingDialogFragment4 extends Fragment implements OnStepChange
     }
     private void _startSubAPKDown(final OnResponseListener<String> callback){
 
-        final String URL = PreferenceBuilder.getInstance(getActivity()).getSecuredPreference()
+        final String URL = PreferenceBuilder.getInstance(getActivity().getApplicationContext()).getSecuredPreference()
                     .getString(DefaultSettings.SUB_APK_URL, "");
 
         final InputStreamVolleyRequest r = new InputStreamVolleyRequest(Request.Method.GET, URL, new Response.Listener<byte[]>() {
@@ -325,7 +324,6 @@ public class InitSettingDialogFragment4 extends Fragment implements OnStepChange
         VolleyQueue.getInstance(getActivity().getApplicationContext()).addObjectToQueue(r);
 
     }
-
 
     @Override
     public void __changeToNextStep(){

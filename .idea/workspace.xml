@@ -52,30 +52,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="233e3dbf-2d51-4c28-83d2-d9b22fae1e43" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Fragment/InitSettingDialogFragment/InitSettingDialogFragment5.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/aes_crypto_0_0_4.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/secure_preferences_lib_0_1_4.xml" />
-      <change type="DELETED" beforePath="C:\Users\SH\Desktop\ANDROID PROJECT\NHFoodAlarm_Refactoring\NHDormitoryAlarm\app\src\main\java\happs\NH\Food\alarm\Utils\ObscuredSharedPreferences.java" afterPath="" />
-      <change type="DELETED" beforePath="C:\Users\SH\Desktop\ANDROID PROJECT\NHFoodAlarm_Refactoring\NHDormitoryAlarm\app\src\main\java\happs\NH\Food\alarm\Utils\PBKDF2Generator.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/volley" afterPath="$PROJECT_DIR$/volley" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Utils/Constant.java" afterPath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Utils/Constant.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Utils/DefaultSettings.java" afterPath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Utils/DefaultSettings.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Fragment/InitSettingDialogFragment/InitSettingDialogFragment1.java" afterPath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Fragment/InitSettingDialogFragment/InitSettingDialogFragment1.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Fragment/InitSettingDialogFragment/InitSettingDialogFragment4.java" afterPath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Fragment/InitSettingDialogFragment/InitSettingDialogFragment4.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Network/InputStreamVolleyRequest.java" afterPath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Network/InputStreamVolleyRequest.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Service/MQTTService.java" afterPath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Service/MQTTService.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Activity/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Activity/MainActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Interfaces/OnPostExecuteListener.java" afterPath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Interfaces/OnPostExecuteListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Interfaces/OnResponseListener.java" afterPath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Interfaces/OnResponseListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Utils/PreferenceBuilder.java" afterPath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Utils/PreferenceBuilder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Activity/SplashActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Activity/SplashActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Utils/TopicBuilder.java" afterPath="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Utils/TopicBuilder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/app.iml" afterPath="$PROJECT_DIR$/app/app.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build.gradle" afterPath="$PROJECT_DIR$/app/build.gradle" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/volley/build.gradle" afterPath="$PROJECT_DIR$/volley/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_init_setting_step3.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_init_setting_step3.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="NHDormitoryAlarm.iws" />
@@ -107,8 +87,8 @@
       <file leaf-file-name="InitSettingDialogFragment4.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Fragment/InitSettingDialogFragment/InitSettingDialogFragment4.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.06860465">
-              <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
+            <state vertical-scroll-proportion="-0.057692308">
+              <caret line="132" column="4" selection-start-line="132" selection-start-column="4" selection-end-line="132" selection-end-column="4" />
               <folding>
                 <element signature="method#newInstance#0;class#InitSettingDialogFragment4#0" expanded="false" />
                 <element signature="method#onCreateView#0;class#InitSettingDialogFragment4#0" expanded="false" />
@@ -119,31 +99,32 @@
                 <element signature="class#3536:3869" expanded="false" />
                 <element signature="e#3816#3817#0" expanded="true" />
                 <element signature="e#3858#3859#0" expanded="true" />
-                <element signature="e#4351#4352#0" expanded="true" />
-                <element signature="e#4393#4394#0" expanded="true" />
+                <element signature="class#3927:4405" expanded="false" />
                 <element signature="method#_saveInDataBase#0;class#InitSettingDialogFragment4#0" expanded="false" />
                 <element signature="method#_startPushService#0;class#InitSettingDialogFragment4#0" expanded="false" />
-                <element signature="class#8352:9467" expanded="false" />
-                <element signature="method#onSuccess#0;class#8352:9467" expanded="false" />
-                <element signature="e#8485#8521#0" expanded="true" />
-                <element signature="e#8624#8625#0" expanded="true" />
-                <element signature="e#8692#8693#0" expanded="true" />
-                <element signature="e#8766#8767#0" expanded="true" />
-                <element signature="e#8831#8832#0" expanded="true" />
-                <element signature="method#onDuplicated#0;class#8352:9467" expanded="false" />
-                <element signature="e#8975#9011#0" expanded="true" />
-                <element signature="class#9017:9340" expanded="false" />
-                <element signature="e#9114#9115#0" expanded="true" />
-                <element signature="e#9182#9183#0" expanded="true" />
-                <element signature="e#9256#9257#0" expanded="true" />
-                <element signature="e#9321#9322#0" expanded="true" />
+                <element signature="class#8368:9483" expanded="false" />
+                <element signature="method#onSuccess#0;class#8368:9483" expanded="false" />
+                <element signature="e#8501#8537#0" expanded="true" />
+                <element signature="e#8640#8641#0" expanded="true" />
+                <element signature="e#8708#8709#0" expanded="true" />
+                <element signature="e#8782#8783#0" expanded="true" />
+                <element signature="e#8847#8848#0" expanded="true" />
+                <element signature="method#onDuplicated#0;class#8368:9483" expanded="false" />
+                <element signature="e#8991#9027#0" expanded="true" />
+                <element signature="class#9033:9356" expanded="false" />
+                <element signature="e#9130#9131#0" expanded="true" />
+                <element signature="e#9198#9199#0" expanded="true" />
+                <element signature="e#9272#9273#0" expanded="true" />
+                <element signature="e#9337#9338#0" expanded="true" />
                 <element signature="method#_startSubAPKDown#0;class#InitSettingDialogFragment4#0" expanded="false" />
-                <element signature="e#11836#12008#0" expanded="true" />
-                <element signature="e#12007#12008#0" expanded="true" />
+                <element signature="e#9861#11874#0" expanded="true" />
+                <element signature="e#11873#11874#0" expanded="true" />
+                <element signature="e#11876#12048#0" expanded="true" />
+                <element signature="e#12047#12048#0" expanded="true" />
                 <element signature="method#__changeToNextStep#0;class#InitSettingDialogFragment4#0" expanded="false" />
                 <element signature="method#__changeToPreviousStep#0;class#InitSettingDialogFragment4#0" expanded="false" />
                 <element signature="method#__onFail#0;class#InitSettingDialogFragment4#0" expanded="false" />
-                <element signature="e#12721#12761#0" expanded="true" />
+                <element signature="e#12760#12800#0" expanded="true" />
                 <element signature="method#__convertHashToString#0;class#InitSettingDialogFragment4#0" expanded="false" />
                 <element signature="method#test#0;class#InitSettingDialogFragment4#0" expanded="false" />
               </folding>
@@ -240,7 +221,7 @@
         <entry file="file://$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Utils/Constant.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="39" column="31" selection-start-line="39" selection-start-column="31" selection-end-line="39" selection-end-column="31" />
+              <caret line="41" column="0" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -2890,12 +2871,12 @@
         <option value="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Activity/SplashActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/fragment_init_setting_step3.xml" />
         <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Utils/Constant.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Service/MQTTService.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Utils/TopicBuilder.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Fragment/InitSettingDialogFragment/InitSettingDialogFragment4.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Activity/MainActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Utils/Constant.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Fragment/InitSettingDialogFragment/InitSettingDialogFragment4.java" />
       </list>
     </option>
   </component>
@@ -3560,7 +3541,7 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25871766" sideWeight="0.502439" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" x="957" y="595" width="365" height="277" />
-      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2654668" sideWeight="0.49756098" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2654668" sideWeight="0.49756098" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32845894" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -3990,14 +3971,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Utils/Constant.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="39" column="31" selection-start-line="39" selection-start-column="31" selection-end-line="39" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Service/MQTTService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -4103,10 +4076,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Utils/Constant.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="41" column="0" selection-start-line="41" selection-start-column="0" selection-end-line="41" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/happs/NH/Food/alarm/Fragment/InitSettingDialogFragment/InitSettingDialogFragment4.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.06860465">
-          <caret line="2" column="7" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
+        <state vertical-scroll-proportion="-0.057692308">
+          <caret line="132" column="4" selection-start-line="132" selection-start-column="4" selection-end-line="132" selection-end-column="4" />
           <folding>
             <element signature="method#newInstance#0;class#InitSettingDialogFragment4#0" expanded="false" />
             <element signature="method#onCreateView#0;class#InitSettingDialogFragment4#0" expanded="false" />
@@ -4117,31 +4098,32 @@
             <element signature="class#3536:3869" expanded="false" />
             <element signature="e#3816#3817#0" expanded="true" />
             <element signature="e#3858#3859#0" expanded="true" />
-            <element signature="e#4351#4352#0" expanded="true" />
-            <element signature="e#4393#4394#0" expanded="true" />
+            <element signature="class#3927:4405" expanded="false" />
             <element signature="method#_saveInDataBase#0;class#InitSettingDialogFragment4#0" expanded="false" />
             <element signature="method#_startPushService#0;class#InitSettingDialogFragment4#0" expanded="false" />
-            <element signature="class#8352:9467" expanded="false" />
-            <element signature="method#onSuccess#0;class#8352:9467" expanded="false" />
-            <element signature="e#8485#8521#0" expanded="true" />
-            <element signature="e#8624#8625#0" expanded="true" />
-            <element signature="e#8692#8693#0" expanded="true" />
-            <element signature="e#8766#8767#0" expanded="true" />
-            <element signature="e#8831#8832#0" expanded="true" />
-            <element signature="method#onDuplicated#0;class#8352:9467" expanded="false" />
-            <element signature="e#8975#9011#0" expanded="true" />
-            <element signature="class#9017:9340" expanded="false" />
-            <element signature="e#9114#9115#0" expanded="true" />
-            <element signature="e#9182#9183#0" expanded="true" />
-            <element signature="e#9256#9257#0" expanded="true" />
-            <element signature="e#9321#9322#0" expanded="true" />
+            <element signature="class#8368:9483" expanded="false" />
+            <element signature="method#onSuccess#0;class#8368:9483" expanded="false" />
+            <element signature="e#8501#8537#0" expanded="true" />
+            <element signature="e#8640#8641#0" expanded="true" />
+            <element signature="e#8708#8709#0" expanded="true" />
+            <element signature="e#8782#8783#0" expanded="true" />
+            <element signature="e#8847#8848#0" expanded="true" />
+            <element signature="method#onDuplicated#0;class#8368:9483" expanded="false" />
+            <element signature="e#8991#9027#0" expanded="true" />
+            <element signature="class#9033:9356" expanded="false" />
+            <element signature="e#9130#9131#0" expanded="true" />
+            <element signature="e#9198#9199#0" expanded="true" />
+            <element signature="e#9272#9273#0" expanded="true" />
+            <element signature="e#9337#9338#0" expanded="true" />
             <element signature="method#_startSubAPKDown#0;class#InitSettingDialogFragment4#0" expanded="false" />
-            <element signature="e#11836#12008#0" expanded="true" />
-            <element signature="e#12007#12008#0" expanded="true" />
+            <element signature="e#9861#11874#0" expanded="true" />
+            <element signature="e#11873#11874#0" expanded="true" />
+            <element signature="e#11876#12048#0" expanded="true" />
+            <element signature="e#12047#12048#0" expanded="true" />
             <element signature="method#__changeToNextStep#0;class#InitSettingDialogFragment4#0" expanded="false" />
             <element signature="method#__changeToPreviousStep#0;class#InitSettingDialogFragment4#0" expanded="false" />
             <element signature="method#__onFail#0;class#InitSettingDialogFragment4#0" expanded="false" />
-            <element signature="e#12721#12761#0" expanded="true" />
+            <element signature="e#12760#12800#0" expanded="true" />
             <element signature="method#__convertHashToString#0;class#InitSettingDialogFragment4#0" expanded="false" />
             <element signature="method#test#0;class#InitSettingDialogFragment4#0" expanded="false" />
           </folding>

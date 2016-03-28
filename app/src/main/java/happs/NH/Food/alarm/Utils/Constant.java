@@ -37,6 +37,7 @@ public interface Constant {
     ///// MQTT TOPIC /////
     String SERVICE_NAME = "happs.NH.Food.alarm.Service.MQTTService";
     String TEST_TOPIC = "welcome";
+
     String THIS_YEAR = "2016/";
 
 }
