@@ -22,6 +22,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import org.eclipse.paho.client.mqttv3.MqttException;
+
 import happs.NH.Food.alarm.Network.VolleyQueue;
 import happs.NH.Food.alarm.R;
 import happs.NH.Food.alarm.Service.MQTTService;
@@ -49,7 +51,11 @@ public class MainActivity extends AppCompatActivity {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mService.publish("test", 2, false, subMessage.getText().toString());
+                try {
+                    mService.publish("test", 2, false, subMessage.getText().toString());
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
             }
         });
 

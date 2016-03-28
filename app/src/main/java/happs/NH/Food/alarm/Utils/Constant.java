@@ -7,7 +7,7 @@ public interface Constant {
 
     ///// 공통 사항 /////
     String CURRENT_API_VERSION = "1";
-    String SALT = "leesnhyun123";
+    String SALT = "leesnhyun";
 
     String ENCRYPT_PREFERENCE_NAME = "pref1";
     String NORMAL_PREFERENCE_NAME = "pref2";
@@ -31,8 +31,12 @@ public interface Constant {
     ///// 사용자확인 /////
     String JAEDAN_OVERNIGHT_URL = "http://jaedan.nonghyup.com/site/mobile/sub03_write.asp";
 
+    ///// SUB APK /////
+    String SUB_APK_DIR="sub";
+
     ///// MQTT TOPIC /////
     String SERVICE_NAME = "happs.NH.Food.alarm.Service.MQTTService";
     String TEST_TOPIC = "welcome";
+    String THIS_YEAR = "2016/";
 
 }

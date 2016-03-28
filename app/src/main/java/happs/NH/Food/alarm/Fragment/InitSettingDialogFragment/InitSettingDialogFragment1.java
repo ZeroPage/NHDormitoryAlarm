@@ -67,10 +67,10 @@ public class InitSettingDialogFragment1 extends Fragment {
                 btnLogin.setEnabled(false);
 
                 // 로그인 시도
-                __doLogin(uid, upw, new OnResponseListener() {
+                __doLogin(uid, upw, new OnResponseListener<String>() {
                     @Override
-                    public void onSuccess(Object response) {
-                        ___changeToNextStep((String)response, uid, upw);
+                    public void onSuccess(String response) {
+                        ___changeToNextStep(response, uid, upw);
                     }
 
                     @Override
@@ -83,7 +83,7 @@ public class InitSettingDialogFragment1 extends Fragment {
         });
     }
 
-    private void __doLogin(final String id, final String pw, final OnResponseListener callback){
+    private void __doLogin(final String id, final String pw, final OnResponseListener<String> callback){
 
         StringRequest r = new StringRequest(Request.Method.POST, Constant.JAEDAN_LOGIN_URL, new Response.Listener<String>() {
                     @Override

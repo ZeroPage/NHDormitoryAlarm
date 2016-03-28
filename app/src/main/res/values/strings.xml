@@ -9,6 +9,10 @@
     <string name="prompt_init_login">로그인</string>
 
     <string name="msg_login_fail">로그인에 실패했습니다.</string>
+    <string name="msg_network_error">
+        서버에 연결할 수 없습니다.\r\n
+        네트워크의 연결상태 및 서버상태를 확인해주십시오.
+    </string>
 
     <string name="prompt_accept">개인정보 수집 및 이용에 동의합니다.</string>
     <string name="prompt_loading">정보를 가져오는 중입니다.</string>
@@ -16,15 +20,15 @@
     <string name="prompt_saving_success">성공적으로 정보를 저장했습니다.</string>
     <string name="prompt_saving_failed">
         정보를 저장하는데 실패했습니다.\n
-        인터넷 연결상태 및 서버상태를 확인해주십시오.
+        네트워크의 연결상태 및 서버상태를 확인해주십시오.
     </string>
     <string name="prompt_loading_success">성공적으로 정보를 가져왔습니다.</string>
     <string name="prompt_loading_failed">정보를 가져오는데 실패했습니다.</string>
 
     <string name="prompt_checkInfo">
-        아래의 정보가 맞는지 확인해주십시오.\r\n
-        1. 정보를 가져오는데 실패했을 경우, 호수를 정확히 입력해주십시오.\n
-        2. 기타사항에는 해당계정의 부수적인 정보가 있을경우 (자율회 등..) 적어주십시오. (선택)
+        1. 정보를 가져오는데 성공했을 경우, 아래의 내용이 맞는지 확인해주십시오.\n
+        2. 정보를 가져오는데 실패했을 경우, 호수를 정확히 입력해주십시오.\n
+        3. 기타사항에는 해당계정의 부수적인 정보가 있을경우 (자율회 등..) 적어주십시오. (선택)
     </string>
 
     <string name="prompt_room_number">방호수</string>
@@ -35,5 +39,10 @@
     <string name="title_init_step2">개인정보 수집 및 이용에 대한 안내</string>
     <string name="title_init_step3">사용자확인</string>
     <string name="title_init_step4">기타설정</string>
+
+    <string name="mqtt_success_msg">
+        이 메세지가 정상적으로 보인다면\n
+        푸쉬서비스에 정상적으로 가입된 것입니다.감사합니다.
+    </string>
 
 </resources>

@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:wheel="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -21,108 +22,130 @@
 
     </FrameLayout>
 
-    <FrameLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp"
-        android:orientation="vertical" >
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/loadingPrompt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="center">
-
-            <com.pnikosis.materialishprogress.ProgressWheel
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                wheel:matProg_barColor="#1fb25a"
-                wheel:matProg_progressIndeterminate="true"
-                android:layout_gravity="center_horizontal|bottom" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/prompt_loading"/>
-
-        </LinearLayout>
-
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
             android:orientation="vertical" >
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/prompt_roomNumberCheck"
-                android:text="@string/prompt_checkInfo"
-                android:lineSpacingExtra="10sp"
-                android:textSize="12sp"
-                android:layout_marginBottom="10dp"/>
-
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="5dp"
-                android:gravity="center_vertical">
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
 
                 <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/prompt_room_number"
-                    android:focusable="false"
-                    android:gravity="center_horizontal" />
-
-                <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:inputType="number"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:singleLine="true"
-                    android:maxLength="3"
-                    android:id="@+id/et_roomNumber" />
+                    android:id="@+id/prompt_roomNumberCheck"
+                    android:text="@string/prompt_checkInfo"
+                    android:lineSpacingExtra="5sp"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@android:color/black" />
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    card_view:cardElevation="1dp"
+                    card_view:cardBackgroundColor="@android:color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_margin="5dp"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:layout_width="80dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/prompt_room_number"
+                                    android:focusable="false"
+                                    android:gravity="center_horizontal" />
+
+                                <EditText
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="18sp"
+                                    android:inputType="number"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:singleLine="true"
+                                    android:maxLength="3"
+                                    android:id="@+id/et_roomNumber" />
+
+                            </LinearLayout>
+
+                        <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:layout_margin="5dp"
+                                android:gravity="center_vertical">
+
+                                <TextView
+                                    android:layout_width="80dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/prompt_extra"
+                                    android:gravity="center_horizontal" />
+
+                                <EditText
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textSize="18sp"
+                                    android:layout_marginStart="5dp"
+                                    android:layout_marginEnd="5dp"
+                                    android:singleLine="true"
+                                    android:id="@+id/et_extra" />
+
+                            </LinearLayout>
+
+                        <Button
+                                android:id="@+id/btn_confirm"
+                                android:enabled="false"
+                                android:text="@string/prompt_confirm"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_horizontal" />
+
+                    </LinearLayout>
+
+                </android.support.v7.widget.CardView>
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="5dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/prompt_extra"
-                    android:gravity="center_horizontal" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:singleLine="true"
-                    android:id="@+id/et_extra" />
-
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/btn_confirm"
-                android:enabled="false"
-                android:text="@string/prompt_confirm"
+                android:id="@+id/loadingPrompt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal" />
+                android:orientation="vertical"
+                android:layout_gravity="center">
 
-        </LinearLayout>
+                <com.pnikosis.materialishprogress.ProgressWheel
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    wheel:matProg_barColor="#1fb25a"
+                    wheel:matProg_progressIndeterminate="true"
+                    android:layout_gravity="center_horizontal|bottom" />
 
-    </FrameLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prompt_loading"/>
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </ScrollView>
 
 </LinearLayout>

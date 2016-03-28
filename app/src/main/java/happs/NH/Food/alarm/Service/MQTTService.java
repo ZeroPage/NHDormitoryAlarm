@@ -118,61 +118,28 @@ public class MQTTService extends Service {
         super.onConfigurationChanged(newConfig);
     }
 
-    public void publish(String topic, int qos, boolean retained, String msg){
-
-        try {
-            mqttClient.publish(topic, msg.getBytes(), qos, retained);
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void unsubscribe(String topic){
-        try {
-            mqttClient.unsubscribe(topic);
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public boolean subscribe(String... topics){
-
-        try {
-            for(String t : topics) {
-                token = mqttClient.subscribe(t, 0);
-                token.waitForCompletion(5000);
-            }
-            return true;
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
     private boolean connect(){
         Log.d(TAG, "connect()");
 
         // client id & password
-        final String cid = PreferenceBuilder.getInstance(getApplicationContext())
-                .getSecuredPreference().getString("pref_userid","");
         final String cpw = PreferenceBuilder.getInstance(getApplicationContext())
                 .getSecuredPreference().getString("pref_device","");
+
+        Log.i("connect id, pw", cpw);
 
         // MQTT Options
         MqttConnectOptions options = new MqttConnectOptions();
         options.setCleanSession(false);
         options.setConnectionTimeout(5000);
         options.setKeepAliveInterval(20 * 60 * 1000); // 20분 keep-alive interval
-        options.setUserName(cid);
+        options.setUserName(cpw);
         options.setPassword(cpw.toCharArray());
 
         // Logging..
         Log.i("Interval", options.getKeepAliveInterval() + "");
 
         try {
-            mqttClient = new MqttAsyncClient("tcp://leesnhyun.iptime.org:1883", cid, new MemoryPersistence());
+            mqttClient = new MqttAsyncClient("tcp://leesnhyun.iptime.org:1883", "user_"+cpw, new MemoryPersistence());
             token = mqttClient.connect(options);
             token.waitForCompletion(3500);
             mqttClient.setCallback(new MqttEventCallback());
@@ -203,6 +170,23 @@ public class MQTTService extends Service {
         }
 
         return false;
+    }
+
+    public void publish(String topic, int qos, boolean retained, String msg) throws MqttException{
+        mqttClient.publish(topic, msg.getBytes(), qos, retained);
+    }
+
+    public void unsubscribe(String topic) throws MqttException{
+        mqttClient.unsubscribe(topic);
+    }
+
+    public void subscribe(String... topics) throws MqttException{
+
+        for(String t : topics) {
+            token = mqttClient.subscribe(t, 0);
+            token.waitForCompletion(5000);
+        }
+
     }
 
     @Override

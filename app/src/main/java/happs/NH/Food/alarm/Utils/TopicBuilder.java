@@ -17,6 +17,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -70,7 +71,7 @@ public class TopicBuilder {
 
 
     // subscribe
-    public void subscribe(final int chmod, final String... topic){
+    public synchronized void subscribe(final int chmod, final String... topic){
 
         final String url = Constant.HTTP + Constant.SERVER_URL + Constant.API_URL + Constant.CURRENT_API_VERSION + Constant.API_SUBSCRIBE;
 
@@ -93,6 +94,9 @@ public class TopicBuilder {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+
+                } catch (MqttException e) {
+                    e.printStackTrace();
                 }
 
             }
@@ -107,7 +111,7 @@ public class TopicBuilder {
                 Map<String, String> params = new HashMap<>();
 
                 final String uid = PreferenceBuilder.getInstance(ctx.getApplicationContext())
-                        .getSecuredPreference().getString("pref_userid", "");
+                        .getSecuredPreference().getString("pref_device", "");
 
                 params.put("userid", uid);
                 params.put("rw", chmod+"");
@@ -134,8 +138,7 @@ public class TopicBuilder {
         VolleyQueue.getInstance(ctx.getApplicationContext()).addObjectToQueue(r);
 
     }
-
-    public void subscribe(final int chmod, final OnDataBaseInsertListener callback, final String... topic){
+    public synchronized void subscribe(final int chmod, final OnDataBaseInsertListener callback, final String... topic){
 
         final String url = Constant.HTTP + Constant.SERVER_URL + Constant.API_URL + Constant.CURRENT_API_VERSION + Constant.API_SUBSCRIBE;
 
@@ -149,7 +152,7 @@ public class TopicBuilder {
                     int status = o.getInt("status");
 
                     // 0 : success, 1: db error
-                    if( status == 0 && _isServiceRunning(Constant.SERVICE_NAME) ) {
+                    if( mService != null && status == 0 && _isServiceRunning(Constant.SERVICE_NAME) ) {
                         mService.subscribe(topic);
                         callback.onSuccess(); return;
                     }
@@ -162,6 +165,9 @@ public class TopicBuilder {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+
+                } catch (MqttException e) {
+                    e.printStackTrace();
                 }
 
                 callback.onFail();
@@ -178,7 +184,7 @@ public class TopicBuilder {
                 Map<String, String> params = new HashMap<>();
 
                 final String uid = PreferenceBuilder.getInstance(ctx.getApplicationContext())
-                        .getSecuredPreference().getString("pref_userid", "");
+                        .getSecuredPreference().getString("pref_device", "");
 
                 params.put("userid", uid);
                 params.put("rw", chmod+"");
@@ -206,9 +212,8 @@ public class TopicBuilder {
 
     }
 
-
     // unsubscribe
-    public void unsubscribe(final String topic){
+    public synchronized void unsubscribe(final String topic){
 
         final String url = Constant.HTTP + Constant.SERVER_URL + Constant.API_URL + Constant.CURRENT_API_VERSION + Constant.API_UNSUBSCRIBE;
 
@@ -231,6 +236,8 @@ public class TopicBuilder {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                } catch (MqttException e) {
+                    e.printStackTrace();
                 }
 
             }
@@ -245,7 +252,75 @@ public class TopicBuilder {
                 Map<String, String> params = new HashMap<>();
 
                 final String uid = PreferenceBuilder.getInstance(ctx.getApplicationContext())
-                        .getSecuredPreference().getString("pref_userid", "");
+                        .getSecuredPreference().getString("pref_device", "");
+
+                params.put("userid", uid);
+                params.put("topic", topic);
+
+                return params;
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    String result = new String(response.data, "UTF-8");
+
+                    return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
+
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+                return Response.error(new VolleyError());
+            }
+        };
+
+        VolleyQueue.getInstance(ctx.getApplicationContext()).addObjectToQueue(r);
+
+    }
+    public synchronized void unsubscribe(final String topic, final OnCallbackListener callback){
+
+        final String url = Constant.HTTP + Constant.SERVER_URL + Constant.API_URL + Constant.CURRENT_API_VERSION + Constant.API_UNSUBSCRIBE;
+
+        StringRequest r = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    // REST API 분석
+                    Log.i("UNSUB_res", response);
+                    JSONObject o =  new JSONObject(response);
+                    int status = o.getInt("status");
+
+                    // 0 : success, 1: db error
+                    if( status == 0 && _isServiceRunning(Constant.SERVICE_NAME) ) {
+                        mService.unsubscribe(topic);
+                        callback.onSuccess(); return;
+                    }
+                    else if ( status == 1 ){
+                        Log.i("UNSUBSCRIBE", "DB ERROR");
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                }
+
+                callback.onFail();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.i("SUBSCRIBE", "DB ERROR");
+                callback.onFail();
+            }
+        }){
+            @Override
+            public Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+
+                final String uid = PreferenceBuilder.getInstance(ctx.getApplicationContext())
+                        .getSecuredPreference().getString("pref_device", "");
 
                 params.put("userid", uid);
                 params.put("topic", topic);
@@ -272,71 +347,26 @@ public class TopicBuilder {
 
     }
 
-    public void unsubscribe(final String topic, final OnCallbackListener callback){
+    // publish
+    public synchronized void publish(final String topic, final int qos, final boolean retain, final String msg){
 
-        final String url = Constant.HTTP + Constant.SERVER_URL + Constant.API_URL + Constant.CURRENT_API_VERSION + Constant.API_UNSUBSCRIBE;
+        try {
+            mService.publish(topic, qos, retain, msg);
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
 
-        StringRequest r = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    // REST API 분석
-                    Log.i("UNSUB_res", response);
-                    JSONObject o =  new JSONObject(response);
-                    int status = o.getInt("status");
+    }
+    public synchronized void publish(final String topic, final int qos, final boolean retain, final String msg, final OnCallbackListener callback){
 
-                    // 0 : success, 1: db error
-                    if( status == 0 && _isServiceRunning(Constant.SERVICE_NAME) ) {
-                        mService.unsubscribe(topic);
-                        callback.onSuccess(); return;
-                    }
-                    else if ( status == 1 ){
-                        Log.i("UNSUBSCRIBE", "DB ERROR");
-                    }
+        try {
+            mService.publish(topic, qos, retain, msg);
+            callback.onSuccess();
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                callback.onFail();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.i("SUBSCRIBE", "DB ERROR");
-                callback.onFail();
-            }
-        }){
-            @Override
-            public Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-
-                final String uid = PreferenceBuilder.getInstance(ctx.getApplicationContext())
-                        .getSecuredPreference().getString("pref_userid", "");
-
-                params.put("userid", uid);
-                params.put("topic", topic);
-
-                return params;
-            }
-
-            @Override
-            protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                try {
-                    String result = new String(response.data, "UTF-8");
-
-                    return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
-
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-                return Response.error(new VolleyError());
-            }
-        };
-
-        VolleyQueue.getInstance(ctx.getApplicationContext()).addObjectToQueue(r);
-
+        callback.onFail();
     }
 
 

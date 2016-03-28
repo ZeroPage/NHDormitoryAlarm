@@ -9,10 +9,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class InputStreamVolleyRequest extends Request<byte[]> {
+
     private final Response.Listener<byte[]> mListener;
     private Map<String, String> mParams;
-    //create a static map for directly accessing headers
-    public Map<String, String> responseHeaders ;
+
+    public InputStreamVolleyRequest(int post, String mUrl,Response.Listener<byte[]> listener,
+                                    Response.ErrorListener errorListener) {
+        // TODO Auto-generated constructor stub
+
+        super(post, mUrl, errorListener);
+        // this request would never use cache.
+        setShouldCache(false);
+        mListener = listener;
+    }
 
     public InputStreamVolleyRequest(int post, String mUrl,Response.Listener<byte[]> listener,
                                     Response.ErrorListener errorListener, HashMap<String, String> params) {
@@ -26,11 +35,9 @@ public class InputStreamVolleyRequest extends Request<byte[]> {
     }
 
     @Override
-    protected Map<String, String> getParams()
-            throws com.android.volley.AuthFailureError {
+    protected Map<String, String> getParams() throws com.android.volley.AuthFailureError {
         return mParams;
-    };
-
+    }
 
     @Override
     protected void deliverResponse(byte[] response) {
@@ -39,10 +46,6 @@ public class InputStreamVolleyRequest extends Request<byte[]> {
 
     @Override
     protected Response<byte[]> parseNetworkResponse(NetworkResponse response) {
-
-        //Initialise local responseHeaders map with response headers received
-        responseHeaders = response.headers;
-
         //Pass the response data here
         return Response.success(response.data, HttpHeaderParser.parseCacheHeaders(response));
     }

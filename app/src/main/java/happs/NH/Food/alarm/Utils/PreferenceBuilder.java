@@ -3,6 +3,8 @@ package happs.NH.Food.alarm.Utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.securepreferences.SecurePreferences;
+
 /**
  * Created by SH on 2016-03-17.
  */
@@ -17,9 +19,8 @@ public class PreferenceBuilder {
         return ourInstance;
     }
 
-    public ObscuredSharedPreferences getSecuredPreference(){
-        return new ObscuredSharedPreferences(ctx,
-                ctx.getSharedPreferences(Constant.ENCRYPT_PREFERENCE_NAME, 0));
+    public SecurePreferences getSecuredPreference(){
+        return new SecurePreferences(ctx, Constant.SALT, Constant.ENCRYPT_PREFERENCE_NAME);
     }
 
     public SharedPreferences getPreference(){

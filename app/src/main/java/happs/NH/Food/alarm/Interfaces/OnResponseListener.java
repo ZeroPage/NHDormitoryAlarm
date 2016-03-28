@@ -3,9 +3,9 @@ package happs.NH.Food.alarm.Interfaces;
 /**
  * Created by SH on 2016-03-21.
  */
-public interface OnResponseListener {
+public interface OnResponseListener<T> {
 
-    void onSuccess(Object response);
+    void onSuccess(T response);
     void onFail();
 
 }

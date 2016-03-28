@@ -1,5 +1,7 @@
 package happs.NH.Food.alarm.Fragment.InitSettingDialogFragment;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,20 +23,31 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.Map;
 
+import dalvik.system.DexClassLoader;
 import happs.NH.Food.alarm.Activity.InitSettingDialogActivity;
 import happs.NH.Food.alarm.Interfaces.OnCallbackListener;
 import happs.NH.Food.alarm.Interfaces.OnDataBaseInsertListener;
+import happs.NH.Food.alarm.Interfaces.OnResponseListener;
 import happs.NH.Food.alarm.Interfaces.OnStepChangeListener;
 import happs.NH.Food.alarm.Network.InputStreamVolleyRequest;
 import happs.NH.Food.alarm.Network.VolleyQueue;
 import happs.NH.Food.alarm.R;
 import happs.NH.Food.alarm.Service.MQTTService;
 import happs.NH.Food.alarm.Utils.Constant;
-import happs.NH.Food.alarm.Utils.PBKDF2Generator;
+import happs.NH.Food.alarm.Utils.DefaultSettings;
 import happs.NH.Food.alarm.Utils.PreferenceBuilder;
 import happs.NH.Food.alarm.Utils.TopicBuilder;
 import happs.NH.Food.alarm.Utils.TopicConstant;
@@ -57,44 +70,63 @@ public class InitSettingDialogFragment4 extends Fragment implements OnStepChange
 
         // object allocation
         loadingPrompt = (LinearLayout)view.findViewById(R.id.loadingPrompt);
-        final OnCallbackListener callback = new OnCallbackListener() {
+
+        // set Callbacks (역순으로 호출됨)
+        final OnResponseListener<String> subAPKCallback = new OnResponseListener<String>() {
             @Override
-            public void onSuccess() {
+            public void onSuccess(String response) {
+                Log.i("Checksum check start", response);
+
+                // 체크섬 저장.
+                PreferenceBuilder pb = PreferenceBuilder.getInstance(getActivity().getApplicationContext());
+                String cs = pb.getSecuredPreference().getString(DefaultSettings.SUB_VERSION_CHECKSUM, "");
+                pb.getSecuredPreference().edit().putString("pref_checksum", response).apply();
+
+                if( !response.equals(cs) ) pb.getSecuredPreference().edit().putString(DefaultSettings.IS_EVENT_ENABLE, "false").apply();
                 loadingPrompt.setVisibility(View.GONE);
+                test();
             }
 
             @Override
             public void onFail() {
-                loadingPrompt.setVisibility(View.GONE);
-                Toast.makeText(getActivity().getApplicationContext(),
-                        getString(R.string.prompt_saving_failed), Toast.LENGTH_LONG).show();
-                __changeToPreviousStep();
+                __onFail();
             }
         };
+        final OnCallbackListener pushCallback = new OnCallbackListener() {
+            @Override
+            public void onSuccess() {
+                // 여기에서는 첫실행이라는 가정하에 진행하므로
+                // 무조건 다운로드하게 한다.
+                _startSubAPKDown(subAPKCallback);
+            }
 
-        // do it
-        _saveInDataBase(new OnDataBaseInsertListener() {
+            @Override
+            public void onFail() {
+                __onFail();
+            }
+        };
+        final OnDataBaseInsertListener dbCallback = new OnDataBaseInsertListener() {
             @Override
             public void onSuccess() {
                 Log.i("DB", "save complete");
-                _startPushService(callback);
+                _startPushService(pushCallback);
             }
 
             @Override
             public void onDuplicated() {
                 Log.i("DB", "duplicated");
-                _startPushService(callback);
+                _startPushService(pushCallback);
             }
 
             @Override
             public void onFail() {
-                loadingPrompt.setVisibility(View.GONE);
-                Toast.makeText(getActivity().getApplicationContext(),
-                        getString(R.string.prompt_saving_failed), Toast.LENGTH_LONG).show();
-                __changeToPreviousStep();
+                __onFail();
             }
 
-        });
+        };
+
+        // do it
+        _saveInDataBase(dbCallback);
 
         return view;
     }
@@ -144,7 +176,6 @@ public class InitSettingDialogFragment4 extends Fragment implements OnStepChange
                 final String did = PreferenceBuilder.getInstance(getActivity().getApplicationContext())
                         .getSecuredPreference().getString("pref_device", "");
                 final String device = Constant.DEVICE_TYPE;
-                final String deviceID = __generatePassword(did);
                 final String uid = PreferenceBuilder.getInstance(getActivity().getApplicationContext())
                         .getSecuredPreference().getString("pref_userid", "");
                 final String roomNum = PreferenceBuilder.getInstance(getActivity().getApplicationContext())
@@ -154,7 +185,7 @@ public class InitSettingDialogFragment4 extends Fragment implements OnStepChange
 
                 params.put("userid", uid);
                 params.put("room", roomNum);
-                params.put("key", deviceID);
+                params.put("did", did);
                 params.put("device", device);
                 params.put("extra", extra);
 
@@ -179,20 +210,21 @@ public class InitSettingDialogFragment4 extends Fragment implements OnStepChange
         VolleyQueue.getInstance(getActivity().getApplicationContext()).addObjectToQueue(r);
 
     }
-
     private void _startPushService(final OnCallbackListener callback){
 
         // 서비스 시작
         getActivity().startService(new Intent(getActivity().getApplicationContext(), MQTTService.class));
 
-        // 토픽을 구독해보자
-        final String topic = Constant.TEST_TOPIC;
+        // 자기자신의 토픽을 구독하고 퍼블리쉬해보자
+        final String uid = PreferenceBuilder.getInstance(getActivity()).getSecuredPreference()
+                .getString("pref_userid", "");
+        final String topic = Constant.THIS_YEAR + uid;
 
         final TopicBuilder tb = new TopicBuilder(getActivity().getApplicationContext());
-        tb.subscribe(TopicConstant.READONLY, new OnDataBaseInsertListener() {
+        tb.subscribe(TopicConstant.READWRITE, new OnDataBaseInsertListener() {
             @Override
             public void onSuccess() {
-                tb.unsubscribe(topic, new OnCallbackListener() {
+                tb.publish(topic, 1, false, getString(R.string.mqtt_success_msg), new OnCallbackListener() {
                     @Override
                     public void onSuccess() {
                         callback.onSuccess();
@@ -207,7 +239,7 @@ public class InitSettingDialogFragment4 extends Fragment implements OnStepChange
 
             @Override
             public void onDuplicated() {
-                tb.unsubscribe(topic, new OnCallbackListener() {
+                tb.publish(topic, 1, false, getString(R.string.mqtt_success_msg), new OnCallbackListener() {
                     @Override
                     public void onSuccess() {
                         callback.onSuccess();
@@ -222,36 +254,63 @@ public class InitSettingDialogFragment4 extends Fragment implements OnStepChange
 
             @Override
             public void onFail() {
+                __onFail();
             }
 
         }, topic);
 
     }
+    private void _startSubAPKDown(final OnResponseListener<String> callback){
 
-    private void _startSubAPKdownload(final OnCallbackListener callback){
-        InputStreamVolleyRequest r = new InputStreamVolleyRequest(
-                Request.Method.POST, url, new Response.Listener<byte[]>() {
+        final String URL = PreferenceBuilder.getInstance(getActivity()).getSecuredPreference()
+                    .getString(DefaultSettings.SUB_APK_URL, "");
+
+        final InputStreamVolleyRequest r = new InputStreamVolleyRequest(Request.Method.GET, URL, new Response.Listener<byte[]>() {
             @Override
             public void onResponse(byte[] response) {
+                InputStream input = null;
+                BufferedOutputStream output = null;
+
                 try {
-                    // REST API 분석
-                    Log.i("res", response);
-                    JSONObject o =  new JSONObject(response);
-                    int status = o.getInt("status");
+                    if (response != null) {
+                        String filename = URL.replaceAll("^.*\\/", "");
 
-                    // PREFERENCE 삭제
-                    PreferenceBuilder.getInstance(getActivity().getApplicationContext())
-                            .getPreference().edit().remove("pref_extra_info");
+                        //covert response to input stream
+                        input = new ByteArrayInputStream(response);
+                        File path = getActivity().getDir(Constant.SUB_APK_DIR, Context.MODE_PRIVATE);
 
-                    // 0 : success, 2: duplicated(이미가입됨)
-                    switch(status){
-                        case 0  : callback.onSuccess(); return;
-                        case 2  : callback.onDuplicated(); return;
-                        default : break;
+                        File file = new File(path, filename);
+                        Log.i("fileName", file.toString() + "/path:" + file.getAbsolutePath());
+
+                        output = new BufferedOutputStream(new FileOutputStream(file));
+                        byte data[] = new byte[1024], md5Bytes[];
+
+                        // GENERATE CHECKSUM
+                        MessageDigest digest = MessageDigest.getInstance("MD5");
+
+                        int count = 0;
+                        while ((count = input.read(data)) != -1) {
+                            output.write(data, 0, count);
+                            if (count > 0) digest.update(data, 0, count);
+                        }
+
+                        output.flush();
+                        md5Bytes = digest.digest();
+
+                        callback.onSuccess(__convertHashToString(md5Bytes));
+                        return;
                     }
 
-                } catch (JSONException e) {
+                } catch (Exception e) {
+                    Log.d("KEY_ERROR", "UNABLE TO DOWNLOAD FILE");
                     e.printStackTrace();
+                } finally {
+                    try {
+                        if (output != null) output.close();
+                        if (input != null) input.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 callback.onFail();
@@ -261,52 +320,12 @@ public class InitSettingDialogFragment4 extends Fragment implements OnStepChange
             public void onErrorResponse(VolleyError error) {
                 callback.onFail();
             }
-        }){
-            @Override
-            public Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-
-                final String did = PreferenceBuilder.getInstance(getActivity().getApplicationContext())
-                        .getSecuredPreference().getString("pref_device", "");
-                final String device = Constant.DEVICE_TYPE;
-                final String deviceID = __generatePassword(did);
-                final String uid = PreferenceBuilder.getInstance(getActivity().getApplicationContext())
-                        .getSecuredPreference().getString("pref_userid", "");
-                final String roomNum = PreferenceBuilder.getInstance(getActivity().getApplicationContext())
-                        .getSecuredPreference().getString("pref_roomNumber", "");
-                final String extra = PreferenceBuilder.getInstance(getActivity().getApplicationContext())
-                        .getPreference().getString("pref_extra_info", "");
-
-                params.put("userid", uid);
-                params.put("room", roomNum);
-                params.put("key", deviceID);
-                params.put("device", device);
-                params.put("extra", extra);
-
-                return params;
-            }
-
-            @Override
-            protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                try {
-                    String result = new String(response.data, "UTF-8");
-
-                    return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
-
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-                return Response.error(new VolleyError());
-            }
-        };
+        });
 
         VolleyQueue.getInstance(getActivity().getApplicationContext()).addObjectToQueue(r);
+
     }
 
-    private String __generatePassword(String plaintext){
-        return PBKDF2Generator.generatePassword(plaintext);
-    }
 
     @Override
     public void __changeToNextStep(){
@@ -314,11 +333,59 @@ public class InitSettingDialogFragment4 extends Fragment implements OnStepChange
         ((InitSettingDialogActivity) getActivity())
                 .replaceFragment(InitSettingDialogFragment4.newInstance());
     }
-
     public void __changeToPreviousStep(){
         // Fragment 변경
         ((InitSettingDialogActivity) getActivity())
                 .replaceFragment(InitSettingDialogFragment3.newInstance());
+    }
+
+
+    private void __onFail(){
+        Activity activity = getActivity();
+
+        if(activity != null) {
+            loadingPrompt.setVisibility(View.GONE);
+            Toast.makeText(getActivity(), getString(R.string.prompt_saving_failed), Toast.LENGTH_LONG).show();
+            __changeToPreviousStep();
+        }
+    }
+    private String __convertHashToString(byte[] md5Bytes) {
+        String returnVal = "";
+        for (int i = 0; i < md5Bytes.length; i++) {
+            returnVal += Integer.toString(( md5Bytes[i] & 0xff ) + 0x100, 16).substring(1);
+        }
+        return returnVal.toUpperCase();
+    }
+
+    private void test(){
+
+        try {
+            // optimized directory, the applciation and package directory
+            final File optimizedDexOutputPath = getActivity().getDir(Constant.SUB_APK_DIR, Context.MODE_PRIVATE);
+            final String filename = PreferenceBuilder.getInstance(getActivity().getApplicationContext())
+                    .getSecuredPreference().getString(DefaultSettings.SUB_APK_URL, "").replaceAll("^.*\\/", "");
+
+            // DexClassLoader to get the file and write it to the optimised directory
+            DexClassLoader cl = new DexClassLoader(optimizedDexOutputPath.getPath()+"/"+filename,
+                    optimizedDexOutputPath.getPath(), null, getActivity().getClassLoader());
+
+            Class<?> clz = cl.loadClass("happs.NH.Food.alarm.sub.SubClass");
+
+            // MyTestClass has a constructor with no arguments
+            Constructor<?> cons = clz.getConstructor();
+            Object obj = cons.newInstance();
+
+            Method m = clz.getMethod("getEvent", Context.class);
+            boolean re = (boolean)m.invoke(obj, getActivity().getApplicationContext());
+
+            Method m2 = clz.getMethod("getVersionCode");
+            int vc = (int)m2.invoke(obj);
+
+            //Log.i("SUBVERSION_CODE", vc+"");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
