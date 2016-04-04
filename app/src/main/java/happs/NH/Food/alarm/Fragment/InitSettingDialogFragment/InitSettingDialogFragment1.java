@@ -1,5 +1,6 @@
 package happs.NH.Food.alarm.Fragment.InitSettingDialogFragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -35,9 +37,16 @@ public class InitSettingDialogFragment1 extends Fragment {
 
     private EditText userid, userpw;
     private Button btnLogin;
+    private Context ctx;
 
     public static InitSettingDialogFragment1 newInstance() {
         return new InitSettingDialogFragment1();
+    }
+    
+    @Override
+    public void onAttach(Context context) {
+        this.ctx = context;
+        super.onAttach(context);
     }
 
     @Override
@@ -75,7 +84,7 @@ public class InitSettingDialogFragment1 extends Fragment {
 
                     @Override
                     public void onFail() {
-                        Toast.makeText(getActivity().getApplicationContext(), "로그인에 실패하였습니다.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(ctx, "로그인에 실패하였습니다.", Toast.LENGTH_LONG).show();
                         btnLogin.setEnabled(true); btnLogin.setText("로그인");
                     }
                 });
@@ -97,7 +106,8 @@ public class InitSettingDialogFragment1 extends Fragment {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getActivity().getApplicationContext(), getString(R.string.msg_login_fail), Toast.LENGTH_LONG).show();
+                        Toast.makeText(ctx, getString(R.string.msg_login_fail), Toast.LENGTH_LONG).show();
+                        callback.onFail();
                     }
                 }){
 
@@ -126,14 +136,19 @@ public class InitSettingDialogFragment1 extends Fragment {
             }
         };
 
-        VolleyQueue.getInstance(getActivity().getApplicationContext()).addObjectToQueue(r);
+        r.setRetryPolicy(new DefaultRetryPolicy(
+                Constant.NETWORK_TIMEOUT,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        VolleyQueue.getInstance(ctx).addObjectToQueue(r);
     }
 
     private void ___changeToNextStep(String cookie, String uid, String upw){
 
         // sharedPreference 에 정보 저장
         PreferenceBuilder
-                .getInstance(getActivity().getApplicationContext())
+                .getInstance(ctx)
                 .getSecuredPreference().edit()
                 .putString("pref_cookie", cookie)
                 .putString("pref_userid", uid)
@@ -141,8 +156,7 @@ public class InitSettingDialogFragment1 extends Fragment {
                 .apply();
 
         // Fragment 변경
-        ((InitSettingDialogActivity)getActivity())
-                .replaceFragment(InitSettingDialogFragment2.newInstance());
+        ((InitSettingDialogActivity)ctx).replaceFragment(InitSettingDialogFragment2.newInstance());
 
     }
 

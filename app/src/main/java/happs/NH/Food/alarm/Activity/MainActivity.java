@@ -44,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // hide animation
+        overridePendingTransition(0, 0);
+
         /* object creation */
         subMessage = (EditText)findViewById(R.id.editText);
         btnSend = (Button)findViewById(R.id.btnSend);
@@ -51,11 +54,7 @@ public class MainActivity extends AppCompatActivity {
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    mService.publish("test", 2, false, subMessage.getText().toString());
-                } catch (MqttException e) {
-                    e.printStackTrace();
-                }
+                mService.publish("test", 2, false, subMessage.getText().toString());
             }
         });
 

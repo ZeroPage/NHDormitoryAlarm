@@ -17,6 +17,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.StringRequest;
 
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,8 +26,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import happs.NH.Food.alarm.Database.Topic;
 import happs.NH.Food.alarm.Interfaces.OnCallbackListener;
 import happs.NH.Food.alarm.Interfaces.OnDataBaseInsertListener;
+import happs.NH.Food.alarm.Interfaces.OnPostExecuteListener;
 import happs.NH.Food.alarm.Network.VolleyQueue;
 import happs.NH.Food.alarm.Service.MQTTService;
 import happs.NH.Food.alarm.Service.MQTTServiceBinder;
@@ -36,10 +39,12 @@ import happs.NH.Food.alarm.Service.MQTTServiceBinder;
  */
 public class TopicBuilder {
 
-    private Context ctx;
-    private boolean mBound;
-    private MQTTService mService;
-    private ServiceConnection mConnection = new ServiceConnection() {
+    private static Context ctx;
+    private static boolean mBound;
+    private static boolean err = false;
+
+    private static MQTTService mService;
+    private static ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             MQTTServiceBinder b = (MQTTServiceBinder) service;
@@ -52,163 +57,172 @@ public class TopicBuilder {
             mBound = false;
         }
     };
+    private static TopicBuilder instance = new TopicBuilder();
 
+    public static TopicBuilder getInstance(Context context) {
+        ctx = context;
 
-    public TopicBuilder(Context ctx){
-        this.ctx = ctx;
+        ctx.startService(new Intent(ctx, MQTTService.class));
         Intent i = new Intent(ctx, MQTTService.class);
         ctx.bindService(i, mConnection, Context.BIND_AUTO_CREATE);
-    }
 
-    @Override
-    protected void finalize() throws Throwable {
+        return instance;
+    }
+    private TopicBuilder(){}
+
+    public void destroy(){
         if(mBound) {
             ctx.unbindService(mConnection);
             mBound=false;
         }
-        super.finalize();
     }
-
 
     // subscribe
-    public synchronized void subscribe(final int chmod, final String... topic){
-
-        final String url = Constant.HTTP + Constant.SERVER_URL + Constant.API_URL + Constant.CURRENT_API_VERSION + Constant.API_SUBSCRIBE;
-
-        StringRequest r = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    // REST API 분석
-                    Log.i("subscribe_res", response);
-                    JSONObject o =  new JSONObject(response);
-                    int status = o.getInt("status");
-
-                    // 0 : success, 1: db error
-                    if( status == 0 && _isServiceRunning(Constant.SERVICE_NAME) ) {
-                        mService.subscribe(topic);
-                    }
-                    else if ( status == 1 ){
-                        Log.i("SUBSCRIBE", "DB ERROR");
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-
-                } catch (MqttException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.i("SUBSCRIBE", "DB ERROR");
-            }
-        }){
-            @Override
-            public Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-
-                final String uid = PreferenceBuilder.getInstance(ctx.getApplicationContext())
-                        .getSecuredPreference().getString("pref_device", "");
-
-                params.put("userid", uid);
-                params.put("rw", chmod+"");
-                for(String t : topic) params.put("topic", t);
-
-                return params;
-            }
-
-            @Override
-            protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                try {
-                    String result = new String(response.data, "UTF-8");
-
-                    return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
-
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-                return Response.error(new VolleyError());
-            }
-        };
-
-        VolleyQueue.getInstance(ctx.getApplicationContext()).addObjectToQueue(r);
-
+    public synchronized void subscribeFromSQLite(final String... topic){
+        if( mService != null && _isServiceRunning(Constant.SERVICE_NAME) ) {
+            mService.subscribe(topic);
+        }
     }
-    public synchronized void subscribe(final int chmod, final OnDataBaseInsertListener callback, final String... topic){
+    public synchronized void subscribe(final Topic... topic){
 
         final String url = Constant.HTTP + Constant.SERVER_URL + Constant.API_URL + Constant.CURRENT_API_VERSION + Constant.API_SUBSCRIBE;
 
-        StringRequest r = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                try {
-                    // REST API 분석
-                    Log.i("subscribe_res", response);
-                    JSONObject o =  new JSONObject(response);
-                    int status = o.getInt("status");
+        for(final Topic t : topic) {
+            StringRequest r = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        // REST API 분석
+                        Log.i("subscribe_res", response);
+                        JSONObject o = new JSONObject(response);
+                        int status = o.getInt("status");
 
-                    // 0 : success, 1: db error
-                    if( mService != null && status == 0 && _isServiceRunning(Constant.SERVICE_NAME) ) {
-                        mService.subscribe(topic);
-                        callback.onSuccess(); return;
-                    }
-                    else if ( status == 1 ){
-                        Log.i("SUBSCRIBE", "DB ERROR");
-                    }
-                    else if ( status == 2 ){
-                        callback.onDuplicated();
-                    }
+                        // 0 : success, 1: db error
+                        if (status == 0 && _isServiceRunning(Constant.SERVICE_NAME)) {
+                            mService.subscribe(t.getName());
+                        } else if (status == 1) {
+                            Log.i("SUBSCRIBE", "DB ERROR");
+                        }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.i("SUBSCRIBE", "DB ERROR");
+                }
+            }) {
+                @Override
+                public Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
 
-                } catch (MqttException e) {
-                    e.printStackTrace();
+                    final String uid = PreferenceBuilder.getInstance(ctx.getApplicationContext())
+                            .getSecuredPreference().getString("pref_device", "");
+
+                    params.put("userid", uid);
+                    params.put("rw", t.getMode() + "");
+                    params.put("topic", t.getName());
+
+                    return params;
                 }
 
-                callback.onFail();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.i("SUBSCRIBE", "DB ERROR");
-                callback.onFail();
-            }
-        }){
-            @Override
-            public Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
+                @Override
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                    try {
+                        String result = new String(response.data, "UTF-8");
 
-                final String uid = PreferenceBuilder.getInstance(ctx.getApplicationContext())
-                        .getSecuredPreference().getString("pref_device", "");
+                        return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
 
-                params.put("userid", uid);
-                params.put("rw", chmod+"");
-                for(String t : topic) params.put("topic", t);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
 
-                return params;
-            }
+                    return Response.error(new VolleyError());
+                }
+            };
 
-            @Override
-            protected Response<String> parseNetworkResponse(NetworkResponse response) {
-                try {
-                    String result = new String(response.data, "UTF-8");
+            VolleyQueue.getInstance(ctx.getApplicationContext()).addObjectToQueue(r);
+        }
+    }
+    public synchronized void subscribe(final OnPostExecuteListener onPostExecuteListener, final OnDataBaseInsertListener callback, final Topic... topic){
 
-                    return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
+        final String url = Constant.HTTP + Constant.SERVER_URL + Constant.API_URL + Constant.CURRENT_API_VERSION + Constant.API_SUBSCRIBE;
 
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+        for(final Topic t : topic) {
+            StringRequest r = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        // REST API 분석
+                        Log.i("subscribe_res", response);
+                        JSONObject o = new JSONObject(response);
+                        int status = o.getInt("status");
+
+                        // 0 : success, 1: db error
+                        if (mService != null && status == 0 && _isServiceRunning(Constant.SERVICE_NAME)) {
+
+                            mService.subscribe(t.getName());
+                            callback.onSuccess(); err=false; return;
+
+                        } else if (status == 1) {
+                            Log.i("SUBSCRIBE", "DB ERROR");
+                        } else if (status == 2 && mService != null && _isServiceRunning(Constant.SERVICE_NAME)) {
+
+                            mService.subscribe(t.getName());
+                            callback.onDuplicated(); err=false; return;
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(onPostExecuteListener == null) callback.onFail();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.i("SUBSCRIBE", "DB ERROR");
+                    if(onPostExecuteListener == null) callback.onFail();
+                }
+            }) {
+                @Override
+                public Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+
+                    final String uid = PreferenceBuilder.getInstance(ctx.getApplicationContext())
+                            .getSecuredPreference().getString("pref_device", "");
+
+                    params.put("userid", uid);
+                    params.put("rw", t.getMode() + "");
+                    params.put("topic", t.getName());
+
+                    return params;
                 }
 
-                return Response.error(new VolleyError());
-            }
-        };
+                @Override
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                    try {
+                        String result = new String(response.data, "UTF-8");
 
-        VolleyQueue.getInstance(ctx.getApplicationContext()).addObjectToQueue(r);
+                        return Response.success(result, HttpHeaderParser.parseCacheHeaders(response));
+
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+                    return Response.error(new VolleyError());
+                }
+            };
+
+            VolleyQueue.getInstance(ctx.getApplicationContext()).addObjectToQueue(r);
+        }
+
+        if(onPostExecuteListener != null ){
+            if( err ){ onPostExecuteListener.onPostExecute(true); }
+            else{ onPostExecuteListener.onPostExecute(false); err=false; }
+        }
 
     }
 
@@ -235,8 +249,6 @@ public class TopicBuilder {
                     }
 
                 } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (MqttException e) {
                     e.printStackTrace();
                 }
 
@@ -302,8 +314,6 @@ public class TopicBuilder {
 
                 } catch (JSONException e) {
                     e.printStackTrace();
-                } catch (MqttException e) {
-                    e.printStackTrace();
                 }
 
                 callback.onFail();
@@ -349,24 +359,15 @@ public class TopicBuilder {
 
     // publish
     public synchronized void publish(final String topic, final int qos, final boolean retain, final String msg){
-
-        try {
-            mService.publish(topic, qos, retain, msg);
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
-
+        mService.publish(topic, qos, retain, msg);
     }
-    public synchronized void publish(final String topic, final int qos, final boolean retain, final String msg, final OnCallbackListener callback){
-
+    public synchronized void publish(final String topic, final int qos, final boolean retain, final String msg, final OnCallbackListener callback) {
         try {
             mService.publish(topic, qos, retain, msg);
             callback.onSuccess();
-        } catch (MqttException e) {
-            e.printStackTrace();
+        } catch (Exception e){
+            callback.onFail();
         }
-
-        callback.onFail();
     }
 
 

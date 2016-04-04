@@ -11,6 +11,11 @@ public interface Constant {
 
     String ENCRYPT_PREFERENCE_NAME = "pref1";
     String NORMAL_PREFERENCE_NAME = "pref2";
+
+    String DATABASE_NAME = "topics.db";
+    int DATABASE_VERSION = 1;
+    int NETWORK_TIMEOUT = 5000;
+
     String DEVICE_TYPE = "a";
 
     String HTTP = "http://";
@@ -21,6 +26,7 @@ public interface Constant {
     String API_REGISTER = "/reg";
     String API_SUBSCRIBE = "/subscribe";
     String API_UNSUBSCRIBE = "/unsubscribe";
+    String API_GET_TOPICS = "/topicList";
 
     ///// 로그인 /////
     String JAEDAN_LOGIN_URL = "http://jaedan.nonghyup.com/site/mobile/login_proc.asp";
@@ -36,8 +42,8 @@ public interface Constant {
 
     ///// MQTT TOPIC /////
     String SERVICE_NAME = "happs.NH.Food.alarm.Service.MQTTService";
-    String TEST_TOPIC = "welcome";
-
+    String TOTAL_TOPIC = "NHDormitory";
     String THIS_YEAR = "2016/";
+
 
 }

@@ -10,7 +10,7 @@
 
     <string name="msg_login_fail">로그인에 실패했습니다.</string>
     <string name="msg_network_error">
-        서버에 연결할 수 없습니다.\r\n
+        서버에 연결할 수 없습니다.\n
         네트워크의 연결상태 및 서버상태를 확인해주십시오.
     </string>
 
@@ -31,6 +31,12 @@
         3. 기타사항에는 해당계정의 부수적인 정보가 있을경우 (자율회 등..) 적어주십시오. (선택)
     </string>
 
+    <string name="prompt_welcome">
+        모든 설정을 완료하였습니다.\n
+        이용해 주셔서 감사합니다.
+        \n\n - 2016.04.03 이승현 -
+    </string>
+
     <string name="prompt_room_number">방호수</string>
     <string name="prompt_extra">기타사항</string>
     <string name="prompt_confirm">확인</string>
@@ -39,10 +45,17 @@
     <string name="title_init_step2">개인정보 수집 및 이용에 대한 안내</string>
     <string name="title_init_step3">사용자확인</string>
     <string name="title_init_step4">기타설정</string>
+    <string name="title_init_step5">환영합니다</string>
 
     <string name="mqtt_success_msg">
-        이 메세지가 정상적으로 보인다면\n
-        푸쉬서비스에 정상적으로 가입된 것입니다.감사합니다.
+        이 메세지가 정상적으로 보인다면
+        푸쉬서비스에 정상적으로 가입된 것입니다. 감사합니다.
     </string>
+
+    <string name="mqtt_dup_success_msg">
+        서버로부터 정상적으로 정보를 가져왔습니다. 감사합니다.
+    </string>
+
+
 
 </resources>

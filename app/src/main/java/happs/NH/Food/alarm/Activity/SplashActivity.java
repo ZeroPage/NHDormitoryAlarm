@@ -1,11 +1,13 @@
 package happs.NH.Food.alarm.Activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -30,6 +32,7 @@ import happs.NH.Food.alarm.Utils.PreferenceBuilder;
 public class SplashActivity extends Activity {
 
     private final String INFO_URL = Constant.HTTP + Constant.SERVER_URL + Constant.ANDROID_INFO;
+    private final Context ctx = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,45 +43,40 @@ public class SplashActivity extends Activity {
         // 1. 정보저장
         // 2. 첫실행체크
         // 3.
-
-        _getPrefixedInformation(new OnPostExecuteListener() {
+        new Thread(new Runnable() {
             @Override
-            public void onPostExecute(boolean err) {
-                _initCheck(new OnCallbackListener() {
-                        @Override
-                        public void onSuccess() {
-                            // 첫실행
-                            Intent i = new Intent(getApplicationContext(), InitSettingActivity.class); finish();
+            public void run() {
+                _getPrefixedInformation(new OnPostExecuteListener() {
+                    @Override
+                    public void onPostExecute(boolean err) {
+                        // 에러 여부에 상관이 없이 첫실행체크
+                        if (__initCheck()) {
+                            // 첫실행일경우
+                            Intent i = new Intent(ctx, InitSettingActivity.class);
+                            finish();
+                            startActivity(i);
+                        } else {
+                            // 첫실행이 아닐경우
+                            Intent i = new Intent(ctx, MainActivity.class);
+                            finish();
                             startActivity(i);
                         }
-
-                        @Override
-                        public void onFail() {
-                            // 첫실행이 아닌경우
-                        }
-                    });
+                    }
+                });
             }
-        });
+        }).start();
 
+    }
+
+    private boolean __initCheck(){
+        return PreferenceBuilder.getInstance(getApplicationContext())
+                .getSecuredPreference().getBoolean("pref_isFirstVisit", true);
     }
 
     /* HTTP REQUESTS */
-    private void _initCheck(final OnCallbackListener callback){
-
-        boolean isFirstVisit = PreferenceBuilder.getInstance(getApplicationContext())
-                .getSecuredPreference().getBoolean("pref_isFirstVisit", true);
-
-        if(isFirstVisit){
-            callback.onSuccess();
-        } else {
-            callback.onFail();
-        }
-    }
-
     private void _getPrefixedInformation(final OnPostExecuteListener callback){
 
-        StringRequest r =
-                new StringRequest(Request.Method.GET, INFO_URL, new Response.Listener<String>() {
+        StringRequest r = new StringRequest(Request.Method.GET, INFO_URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
 
@@ -112,6 +110,11 @@ public class SplashActivity extends Activity {
                         callback.onPostExecute(true);
                     }
                 });
+
+        r.setRetryPolicy(new DefaultRetryPolicy(
+                Constant.NETWORK_TIMEOUT,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         VolleyQueue.getInstance(getApplicationContext()).addObjectToQueue(r);
     }

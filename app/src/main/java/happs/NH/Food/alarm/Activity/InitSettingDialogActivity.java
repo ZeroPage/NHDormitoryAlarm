@@ -1,5 +1,6 @@
 package happs.NH.Food.alarm.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +10,7 @@ import android.view.KeyEvent;
 import android.view.WindowManager;
 
 import happs.NH.Food.alarm.Fragment.InitSettingDialogFragment.InitSettingDialogFragment1;
+import happs.NH.Food.alarm.Interfaces.OnBackPressedListener;
 import happs.NH.Food.alarm.R;
 
 /**
@@ -17,6 +19,7 @@ import happs.NH.Food.alarm.R;
 public class InitSettingDialogActivity extends AppCompatActivity {
 
     private FragmentManager fm;
+    private OnBackPressedListener callback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,14 +39,8 @@ public class InitSettingDialogActivity extends AppCompatActivity {
                 .commit();
     }
 
-    @Override
-    public boolean onKeyDown (int keyCode, KeyEvent event){
-        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            finish();overridePendingTransition(0, R.anim.fadeout);
-            return true;
-        }
-
-        return super.onKeyDown(keyCode, event);
+    public void setOnBackPressedListener(OnBackPressedListener listener){
+        this.callback = listener;
     }
 
     public void replaceFragment(Fragment fragment){
@@ -52,4 +49,18 @@ public class InitSettingDialogActivity extends AppCompatActivity {
         t.commit();
     }
 
+    public void finishActivity(){
+        finish();
+        Intent i = new Intent(this, MainActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();overridePendingTransition(0, R.anim.fadeout);
+        if( callback != null ) callback.onBack();
+        super.onBackPressed();
+    }
 }

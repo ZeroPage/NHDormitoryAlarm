@@ -1,5 +1,6 @@
 package happs.NH.Food.alarm.Fragment.InitSettingDialogFragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,9 +22,16 @@ public class InitSettingDialogFragment2 extends Fragment implements OnStepChange
 
     private WebView termsWebView;
     private CheckBox termsAcceptCheck;
+    private Context ctx;
 
     public static InitSettingDialogFragment2 newInstance() {
         return new InitSettingDialogFragment2();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        this.ctx = context;
+        super.onAttach(context);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,8 +73,7 @@ public class InitSettingDialogFragment2 extends Fragment implements OnStepChange
     public void __changeToNextStep(){
 
         // Fragment 변경
-        ((InitSettingDialogActivity)getActivity())
-                .replaceFragment(InitSettingDialogFragment3.newInstance());
+        ((InitSettingDialogActivity)ctx).replaceFragment(InitSettingDialogFragment3.newInstance());
 
     }
 

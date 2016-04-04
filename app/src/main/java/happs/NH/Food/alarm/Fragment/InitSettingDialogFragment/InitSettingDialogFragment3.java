@@ -1,5 +1,6 @@
 package happs.NH.Food.alarm.Fragment.InitSettingDialogFragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
@@ -38,6 +39,7 @@ import happs.NH.Food.alarm.R;
 import happs.NH.Food.alarm.Utils.Constant;
 import happs.NH.Food.alarm.Utils.PreferenceBuilder;
 
+
 /**
  * Created by SH on 2016-03-20.
  */
@@ -46,9 +48,16 @@ public class InitSettingDialogFragment3 extends Fragment implements OnStepChange
     private EditText userRoom, userExtra;
     private LinearLayout loadingPrompt;
     private Button btnConfirm;
+    private Context ctx;
 
     public static InitSettingDialogFragment3 newInstance() {
         return new InitSettingDialogFragment3();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        this.ctx = context;
+        super.onAttach(context);
     }
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,18 +73,18 @@ public class InitSettingDialogFragment3 extends Fragment implements OnStepChange
         _getUserInformation(new OnResponseListener() {
             @Override
             public void onSuccess(Object response) {
-                Toast.makeText(getActivity().getApplicationContext(),
-                        getString(R.string.prompt_loading_success), Toast.LENGTH_LONG).show();
-
+                if(getActivity() != null) {
+                    Toast.makeText(getActivity(), getString(R.string.prompt_loading_success), Toast.LENGTH_LONG).show();
+                }
                 userRoom.setText((String)response); userRoom.setEnabled(false);
                 userExtra.requestFocus(); btnConfirm.setEnabled(true);
             }
 
             @Override
             public void onFail() {
-                Toast.makeText(getActivity().getApplicationContext(),
-                        getString(R.string.prompt_loading_failed), Toast.LENGTH_LONG).show();
-
+                if(getActivity() != null) {
+                    Toast.makeText(getActivity(), getString(R.string.prompt_loading_failed), Toast.LENGTH_LONG).show();
+                }
                 userRoom.requestFocus();
             }
         });
@@ -111,7 +120,7 @@ public class InitSettingDialogFragment3 extends Fragment implements OnStepChange
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> result = new HashMap<>();
-                String cookie = PreferenceBuilder.getInstance(getActivity().getApplicationContext())
+                String cookie = PreferenceBuilder.getInstance(ctx.getApplicationContext())
                         .getSecuredPreference().getString("pref_cookie", "");
                 result.put("Cookie", cookie);
 
@@ -133,7 +142,7 @@ public class InitSettingDialogFragment3 extends Fragment implements OnStepChange
             }
         };
 
-        VolleyQueue.getInstance(getActivity().getApplicationContext()).addObjectToQueue(r);
+        VolleyQueue.getInstance(ctx.getApplicationContext()).addObjectToQueue(r);
 
     }
 
@@ -193,13 +202,12 @@ public class InitSettingDialogFragment3 extends Fragment implements OnStepChange
     public void __changeToNextStep(){
 
         // Device ID를 이 단계에서 생성해서 저장하자
-        final String dId = android.provider.Settings.Secure.getString(
-                getActivity().getBaseContext().getContentResolver(),
-                Settings.Secure.ANDROID_ID);
+        final String dId = android.provider.Settings.Secure
+                .getString(ctx.getContentResolver(), Settings.Secure.ANDROID_ID);
 
         // SecuredSharedPreference 정보저장
         PreferenceBuilder
-                .getInstance(getActivity().getApplicationContext())
+                .getInstance(ctx)
                 .getSecuredPreference().edit()
                 .putString("pref_roomNumber", userRoom.getText().toString())
                 .putString("pref_device", dId)
@@ -207,14 +215,13 @@ public class InitSettingDialogFragment3 extends Fragment implements OnStepChange
 
         // SharedPreference 에 정보저장
         PreferenceBuilder
-                .getInstance(getActivity().getApplicationContext())
+                .getInstance(ctx)
                 .getPreference().edit()
                 .putString("pref_extra_info", userExtra.getText().toString())
                 .apply();
 
         // Fragment 변경
-                ((InitSettingDialogActivity) getActivity())
-                .replaceFragment(InitSettingDialogFragment4.newInstance());
+        ((InitSettingDialogActivity) ctx).replaceFragment(InitSettingDialogFragment4.newInstance());
 
     }
 

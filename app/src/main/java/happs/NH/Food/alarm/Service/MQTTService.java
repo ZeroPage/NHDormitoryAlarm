@@ -1,5 +1,6 @@
 package happs.NH.Food.alarm.Service;
 
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
@@ -11,7 +12,6 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -21,17 +21,20 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
-import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import happs.NH.Food.alarm.Activity.PushPopupActivity;
+import happs.NH.Food.alarm.Database.Topic;
+import happs.NH.Food.alarm.Database.TopicDBHelper;
+import happs.NH.Food.alarm.Utils.Constant;
 import happs.NH.Food.alarm.Utils.PreferenceBuilder;
+import happs.NH.Food.alarm.Utils.PushBuilder;
 
 public class MQTTService extends Service {
 
@@ -48,7 +51,6 @@ public class MQTTService extends Service {
     private volatile IMqttToken token;
 
     class MQTTBroadcastReceiver extends BroadcastReceiver {
-
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -119,7 +121,7 @@ public class MQTTService extends Service {
     }
 
     private boolean connect(){
-        Log.d(TAG, "connect()");
+        Log.i(TAG, "connect()");
 
         // client id & password
         final String cpw = PreferenceBuilder.getInstance(getApplicationContext())
@@ -143,6 +145,15 @@ public class MQTTService extends Service {
             token = mqttClient.connect(options);
             token.waitForCompletion(3500);
             mqttClient.setCallback(new MqttEventCallback());
+
+            // local DB에 있는 내용을 subscribe
+            TopicDBHelper db = new TopicDBHelper(getApplicationContext(), Constant.DATABASE_NAME, null, Constant.DATABASE_VERSION);
+            List<Topic> tlist = db.getTopicLists();
+
+            String[] slist = new String[tlist.size()];
+            for(int i=0; i<tlist.size(); i++) slist[i] = tlist.get(i).getName();
+
+            subscribe(slist);
 
             return true;
 
@@ -172,19 +183,34 @@ public class MQTTService extends Service {
         return false;
     }
 
-    public void publish(String topic, int qos, boolean retained, String msg) throws MqttException{
-        mqttClient.publish(topic, msg.getBytes(), qos, retained);
+    public void publish(String topic, int qos, boolean retained, String msg) {
+        try {
+            mqttClient.publish(topic, msg.getBytes(), qos, retained);
+        } catch (MqttException e) {
+            connect();
+            e.printStackTrace();
+        }
     }
 
-    public void unsubscribe(String topic) throws MqttException{
-        mqttClient.unsubscribe(topic);
+    public void unsubscribe(String topic) {
+        try {
+            mqttClient.unsubscribe(topic);
+        } catch (MqttException e) {
+            connect();
+            e.printStackTrace();
+        }
     }
 
-    public void subscribe(String... topics) throws MqttException{
+    public void subscribe(String... topics) {
 
-        for(String t : topics) {
-            token = mqttClient.subscribe(t, 0);
-            token.waitForCompletion(5000);
+        try {
+            for (String t : topics) {
+                token = mqttClient.subscribe(t, 1);
+                token.waitForCompletion(5000);
+            }
+        } catch(MqttException e){
+            connect();
+            e.printStackTrace();
         }
 
     }
@@ -209,16 +235,16 @@ public class MQTTService extends Service {
         }
 
         @Override
-        @SuppressLint("NewApi")
         public void messageArrived(String topic, final MqttMessage msg) throws Exception {
             Log.i(TAG, "Message arrived from topic : " + topic);
             Handler h = new Handler(getMainLooper());
             h.post(new Runnable() {
                 @Override
                 public void run() {
-                    Intent i = new Intent(MQTTService.this, PushPopupActivity.class);
 
+                    Intent i = new Intent(MQTTService.this, PushPopupActivity.class);
                     i.putExtra("msg", new String(msg.getPayload()));
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     PendingIntent pi = PendingIntent.getActivity(getApplicationContext(), 0, i, PendingIntent.FLAG_ONE_SHOT);
 
                     try {
@@ -227,8 +253,8 @@ public class MQTTService extends Service {
                         Log.i("PendingIntent", "cancel Expetion");
                     }
 
-                    //PushBuilder b = new PushBuilder();
-                    //b.makeNotification(getApplicationContext(), null, new String(msg.getPayload()));
+                    PushBuilder b = new PushBuilder();
+                    b.makeNotification(getApplicationContext(), null, new String(msg.getPayload()));
                     //b.makePopupNotification(getApplicationContext(), i, new String(msg.getPayload()));
 
                 }
